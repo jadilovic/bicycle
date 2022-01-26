@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import usePersonRequest from '../api/usePersonRequest';
 import { login } from '../auth/Authentication';
 import {
@@ -38,11 +38,17 @@ function Copyright(props) {
 	);
 }
 
-export default function SignIn() {
+export default function SignIn(props) {
+	const { setAuthenticated } = props;
 	const personAPI = usePersonRequest();
 	const [next, setNext] = useState(false);
 	const [user, setUser] = useState({ email: '', code: '' });
 	const [error, setError] = useState(false);
+
+	useEffect(() => {
+		localStorage.removeItem('user');
+		setAuthenticated(false);
+	}, []);
 
 	const checkUserCredentials = async () => {
 		const personList = await personAPI.getPersons();
@@ -59,6 +65,7 @@ export default function SignIn() {
 		if (user) {
 			console.log(user);
 			login(user);
+			setAuthenticated(true);
 			setNext(true);
 		} else {
 			setError(true);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import { getUserData, isAuthenticated } from '../auth/Authentication';
-// import { useHistory } from 'react-router-dom';
 import UserMenu from './UserMenu';
 import { AppBar } from '@mui/material';
 import Box from '@mui/material/Box';
@@ -9,7 +9,6 @@ import Typography from '@mui/material/Typography';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import IconButton from '@mui/material/IconButton';
-import Link from '@mui/material/Link';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
@@ -20,67 +19,67 @@ import MenuIcon from '@mui/icons-material/Menu';
 import UserWindow from '../utils/UserWindow';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
-import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
-import QueryStatsIcon from '@mui/icons-material/QueryStats';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import BikeScooterIcon from '@mui/icons-material/BikeScooter';
+import DirectionsBikeIcon from '@mui/icons-material/DirectionsBike';
+import PlaceIcon from '@mui/icons-material/Place';
+import AddLocationIcon from '@mui/icons-material/AddLocation';
 import PersonIcon from '@mui/icons-material/Person';
+import idk_studio from '../images/idk_studio.jpg';
 
-const drawerWidth = 180;
+const drawerWidth = 200;
 
 const Navbar = (props) => {
 	const screen = UserWindow();
-	const { setDarkMode, darkMode } = props;
-	// const history = useHistory();
-	const [authenticated, setAuthenticated] = useState(null);
+	const { setDarkMode, darkMode, authenticated, setAuthenticated } = props;
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [menuClicked, setMenuClicked] = useState(false);
+	const [linkChange, setLinkChange] = useState('');
+
 	let drawerMenu = [
 		{
 			section: 'Home',
-			icon: null,
+			icon: <BikeScooterIcon />,
 			linkToSection: '/bicycle',
-			permission: 'APPCLIENT',
+			permission: 'CLIENT',
 		},
 		{
 			section: 'Dock',
-			icon: null,
+			icon: <PlaceIcon />,
 			linkToSection: '/dock',
-			permission: 'APPCLIENT',
+			permission: 'CLIENT',
 		},
 	];
 	let drawerAdmin = [
 		{
 			section: 'Create Bicycle',
-			icon: <PersonIcon />,
+			icon: <DirectionsBikeIcon />,
 			linkToSection: '/create_bicycle',
 			permission: 'APPADMIN',
 		},
 		{
 			section: 'Create Dock',
-			icon: <PeopleOutlineIcon />,
+			icon: <AddLocationIcon />,
 			linkToSection: '/create_dock',
 			permission: 'APPADMIN',
 		},
 		{
-			section: 'Create APPCLIENT',
-			icon: <FormatListNumberedIcon />,
-			linkToSection: '/create_APPCLIENT',
+			section: 'Create Client',
+			icon: <PersonIcon />,
+			linkToSection: '/create_client',
 			permission: 'APPADMIN',
 		},
 		{
-			section: 'APPCLIENT',
-			icon: <LibraryBooksIcon />,
-			linkToSection: '/APPCLIENT',
+			section: 'Clients',
+			icon: <PeopleOutlineIcon />,
+			linkToSection: '/client',
 			permission: 'APPADMIN',
 		},
 	];
 	let role = '';
 	if (isAuthenticated()) {
 		role = getUserData().Role;
-		if (role === 'APPCLIENT') {
-			drawerAdmin = drawerAdmin.filter(
-				(menu) => menu.permission === 'APPCLIENT'
-			);
+		if (role === 'CLIENT') {
+			drawerAdmin = drawerAdmin.filter((menu) => menu.permission === 'CLIENT');
 		}
 	} else {
 		drawerAdmin = [];
@@ -113,13 +112,6 @@ const Navbar = (props) => {
 		}
 	}, [screen]);
 
-	useEffect(() => {
-		// history.listen(() => {
-		// 	console.log(window.location.pathname);
-		// 	setAuthenticated(isAuthenticated());
-		// });
-	}, []); // eslint-disable-line react-hooks/exhaustive-deps
-
 	const toggleTheme = () => {
 		if (darkMode) {
 			setDarkMode(false);
@@ -128,49 +120,48 @@ const Navbar = (props) => {
 		}
 	};
 
-	const handleMenuClick = (menuLink, category) => {
+	const handleMenuClick = () => {
 		if (screen.dynamicWidth < 600) {
 			setDrawerOpen(false);
 		}
-		localStorage.setItem('category', category);
-		//	history.push(menuLink);
 	};
+
+	console.log('authenticated : ', authenticated);
 
 	return (
 		<Box sx={{ flexGrow: 1 }}>
-			{/* <AppBar position="static"> */}
 			<AppBar
 				position="fixed"
 				sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
 			>
 				<Toolbar>
-					{/* {authenticated && ( */}
-					<IconButton
-						color="inherit"
-						aria-label="open drawer"
-						edge="start"
-						onClick={handleDrawerToggle}
-						sx={{ mr: 2, display: { sm: 'none' } }}
-					>
-						<MenuIcon />
-					</IconButton>
-					{/* )} */}
+					{authenticated && (
+						<IconButton
+							color="inherit"
+							aria-label="open drawer"
+							edge="start"
+							onClick={handleDrawerToggle}
+							sx={{ mr: 2, display: { sm: 'none' } }}
+						>
+							<MenuIcon />
+						</IconButton>
+					)}
 					<Typography
 						variant="h6"
 						component="div"
 						paddingRight={2}
 						paddingTop={1.25}
 					>
-						<Link underline="none" href="/materials" color="white">
+						<Link to="/bicycle">
 							<img
 								style={{ width: '100%', height: 40 }}
-								src=""
+								src={idk_studio}
 								alt="bild-it logo"
 							/>
 						</Link>
 					</Typography>
 					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-						Sadnice
+						IDK Studio
 					</Typography>
 					<Typography>
 						<IconButton
@@ -181,75 +172,68 @@ const Navbar = (props) => {
 							{darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
 						</IconButton>
 					</Typography>
-					{authenticated ? (
-						<UserMenu />
-					) : (
-						<Link underline="none" href="/" color="white">
-							<Typography variant="h6" component="div">
-								{'Prijava'}
-							</Typography>
-						</Link>
-					)}
+					{authenticated && <UserMenu />}
 				</Toolbar>
 			</AppBar>
-			{/* {authenticated && ( */}
-			<ClickAwayListener onClickAway={handleClickAway}>
-				<Drawer
-					variant="persistent"
-					sx={{
-						width: drawerWidth,
-						flexShrink: 0,
-						[`& .MuiDrawer-paper`]: {
+			{authenticated && (
+				<ClickAwayListener onClickAway={handleClickAway}>
+					<Drawer
+						variant="persistent"
+						sx={{
 							width: drawerWidth,
-							boxSizing: 'border-box',
-						},
-					}}
-					open={drawerOpen}
-					onClose={handleDrawerToggle}
-					ModalProps={{
-						keepMounted: true, // Better open performance on mobile.
-					}}
-				>
-					<Toolbar />
-					<Box sx={{ overflow: 'auto' }}>
-						<List>
-							{drawerMenu.map((menuItem, index) => (
-								<ListItem
-									onClick={() =>
-										handleMenuClick(menuItem.linkToSection, menuItem.section)
-									}
-									button
-									key={index}
-								>
-									{/* <ListItemIcon>{menuItem.icon}</ListItemIcon> */}
-									<img
-										style={{ width: '30px', height: '30px', marginRight: 25 }}
-										src={menuItem.icon}
-										alt="icon instead"
-									/>
-									<ListItemText primary={menuItem.section} />
-								</ListItem>
-							))}
-						</List>
-						<Divider />
-						<List>
-							{drawerAdmin.map((item, index) => (
-								<ListItem
-									button
-									key={index}
-									onClick={() =>
-										handleMenuClick(item.linkToSection, item.section)
-									}
-								>
-									<ListItemIcon>{item.icon}</ListItemIcon>
-									<ListItemText primary={item.section} />
-								</ListItem>
-							))}
-						</List>
-					</Box>
-				</Drawer>
-			</ClickAwayListener>
-			{/* )} */}
+							flexShrink: 0,
+							[`& .MuiDrawer-paper`]: {
+								width: drawerWidth,
+								boxSizing: 'border-box',
+							},
+						}}
+						open={drawerOpen}
+						onClose={handleDrawerToggle}
+						ModalProps={{
+							keepMounted: true, // Better open performance on mobile.
+						}}
+					>
+						<Toolbar />
+						<Box sx={{ overflow: 'auto' }}>
+							<List>
+								{drawerMenu.map((menuItem, index) => (
+									<Link
+										key={index}
+										to={menuItem.linkToSection}
+										style={{
+											textDecoration: 'none',
+											color: `${darkMode ? 'white' : 'black'} `,
+										}}
+									>
+										<ListItem onClick={handleMenuClick} button>
+											<ListItemIcon>{menuItem.icon}</ListItemIcon>
+											<ListItemText primary={menuItem.section} />
+										</ListItem>
+									</Link>
+								))}
+							</List>
+							<Divider />
+							<List>
+								{drawerAdmin.map((item, index) => (
+									<Link
+										key={index}
+										to={item.linkToSection}
+										style={{
+											textDecoration: 'none',
+											color: `${darkMode ? 'white' : 'black'} `,
+										}}
+									>
+										<ListItem onClick={handleMenuClick} button>
+											<ListItemIcon>{item.icon}</ListItemIcon>
+											<ListItemText primary={item.section} />
+										</ListItem>
+									</Link>
+								))}
+							</List>
+						</Box>
+					</Drawer>
+				</ClickAwayListener>
+			)}
 		</Box>
 	);
 };

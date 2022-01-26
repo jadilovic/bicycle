@@ -4,6 +4,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import LoadingPage from '../components/LoadingPage';
 
 const columns = [
+	{ field: 'id', headerName: 'ID', type: 'number' },
 	{ field: 'Code', headerName: 'Code', type: 'number' },
 	{ field: 'Color', headerName: 'Color' },
 	{ field: 'Status', headerName: 'Status' },
@@ -26,6 +27,10 @@ export default function Bicycle() {
 
 	const displayBicycles = async () => {
 		const bicycles = await bicycleAPI.getBicycles();
+		bicycles.forEach(function (element, index) {
+			element.id = index + 1;
+		});
+		console.log(bicycles);
 		setRows(bicycles);
 		setLoading(false);
 	};
@@ -34,7 +39,9 @@ export default function Bicycle() {
 		displayBicycles();
 	}, []);
 
-	if (!loading) {
+	console.log(loading);
+
+	if (loading) {
 		return <LoadingPage />;
 	}
 

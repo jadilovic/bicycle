@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-// import { useHistory } from 'react-router-dom';
 import { logout, getUserData } from '../auth/Authentication';
+import { BrowserRouter as Router, Navigate } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -10,7 +10,7 @@ import { Menu } from '@mui/material';
 
 const UserMenu = () => {
 	const [anchorEl, setAnchorEl] = useState(null);
-	//	const history = useHistory();
+	const [back, setBack] = useState(false);
 
 	const handleMenu = (event) => {
 		setAnchorEl(event.currentTarget);
@@ -22,8 +22,12 @@ const UserMenu = () => {
 
 	const handleLogout = () => {
 		logout();
-		//	history.push('/');
+		setBack(true);
 	};
+
+	if (back) {
+		return <Navigate to="/" />;
+	}
 
 	return (
 		<div style={{ margin: 0 }}>
@@ -54,12 +58,12 @@ const UserMenu = () => {
 			>
 				<MenuItem style={{ pointerEvents: 'none' }}>
 					<Typography component="div" paddingRight={2}>
-						{`${getUserData()?.firstName} ${getUserData()?.lastName}`}
+						{`${getUserData()?.Name} ${getUserData()?.Surname}`}
 					</Typography>
 				</MenuItem>
 				<MenuItem style={{ pointerEvents: 'none' }}>
 					<Typography component="div" paddingRight={2}>
-						{`${getUserData()?.email}`}
+						{`${getUserData()?.Email}`}
 					</Typography>
 				</MenuItem>
 				<Typography align="center">
