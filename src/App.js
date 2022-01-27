@@ -51,12 +51,60 @@ function App() {
 					path="/"
 					element={<Login setAuthenticated={setAuthenticated} />}
 				/>
-				<ClientRoute exact path="bicycle" element={<Bicycle />} />
-				<ClientRoute exact path="dock" element={<Dock />} />
-				<AdminRoute exact path="create_bicycle" element={<CreateBicycle />} />
-				<AdminRoute exact path="person" element={<Person />} />
-				<AdminRoute exact path="create_person" element={<CreatePerson />} />
-				<ClientRoute exact path="restricted" element={<Restricted />} />
+				<Route
+					exact
+					path="bicycle"
+					element={
+						<ClientRoute>
+							<Bicycle />
+						</ClientRoute>
+					}
+				/>
+				<Route
+					exact
+					path="dock"
+					element={
+						<ClientRoute>
+							<Dock />
+						</ClientRoute>
+					}
+				/>
+				<Route
+					exact
+					path="create_bicycle"
+					element={
+						<AdminRoute>
+							<CreateBicycle />
+						</AdminRoute>
+					}
+				/>
+				<Route
+					exact
+					path="person"
+					element={
+						<AdminRoute>
+							<Person />
+						</AdminRoute>
+					}
+				/>
+				<Route
+					exact
+					path="create_person"
+					element={
+						<AdminRoute>
+							<CreatePerson />
+						</AdminRoute>
+					}
+				/>
+				<Route
+					exact
+					path="restricted"
+					element={
+						<ClientRoute>
+							<Restricted />
+						</ClientRoute>
+					}
+				/>
 				<Route path="/*" element={<ErrorPage />} />
 			</Routes>
 		</ThemeProvider>
