@@ -37,7 +37,7 @@ const Navbar = (props) => {
 
 	let drawerMenu = [
 		{
-			section: 'Home',
+			section: 'Bicycle',
 			icon: <BikeScooterIcon />,
 			linkToSection: '/bicycle',
 			permission: 'CLIENT',
@@ -65,13 +65,13 @@ const Navbar = (props) => {
 		{
 			section: 'Create Client',
 			icon: <PersonIcon />,
-			linkToSection: '/create_client',
+			linkToSection: '/create_person',
 			permission: 'APPADMIN',
 		},
 		{
 			section: 'Clients',
 			icon: <PeopleOutlineIcon />,
-			linkToSection: '/client',
+			linkToSection: '/person',
 			permission: 'APPADMIN',
 		},
 	];
@@ -126,8 +126,6 @@ const Navbar = (props) => {
 		}
 	};
 
-	console.log('authenticated : ', authenticated);
-
 	return (
 		<Box sx={{ flexGrow: 1 }}>
 			<AppBar
@@ -161,7 +159,7 @@ const Navbar = (props) => {
 						</Link>
 					</Typography>
 					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-						IDK Studio
+						Bicycle-sharing
 					</Typography>
 					<Typography>
 						<IconButton

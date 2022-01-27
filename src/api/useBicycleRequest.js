@@ -69,7 +69,7 @@ const useBicycleRequest = () => {
 					authorization: `Bearer ${REAL_TOKEN}`,
 				},
 			}).then((res) => {
-				console.log(res.data.Response);
+				console.log(res.data);
 				return res.data.Response;
 			});
 		} catch (err) {

@@ -12,13 +12,11 @@ import { Box, Alert } from '@mui/material';
 import CategoryIcon from '@mui/icons-material/Category';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-// import ImageUploader from '../components/ImageUploader';
 import UserWindow from '../utils/UserWindow';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
-// import categories from '../data/categories';
 
 function Copyright() {
 	return (
@@ -28,13 +26,12 @@ function Copyright() {
 			color="text.secondary"
 			align="center"
 		>
-			{`Products Online ${new Date().getFullYear()}.`}
+			{`IDK Studio ${new Date().getFullYear()}.`}
 		</Typography>
 	);
 }
 
 const CreateProduct = () => {
-	// const history = useHistory();
 	const bicycleAPI = useBicycleRequest();
 	const dockAPI = useDockRequest();
 	const validationHook = useValidationHook();
@@ -150,7 +147,7 @@ const CreateProduct = () => {
 						</Box>
 					)}
 					<Grid container spacing={2}>
-						<Grid item xs={12} sm={9}>
+						<Grid item xs={12}>
 							<TextField
 								error={colorError.error ? true : false}
 								helperText={colorError?.msg}
@@ -164,7 +161,7 @@ const CreateProduct = () => {
 								onChange={handleChange}
 							/>
 						</Grid>
-						<Grid item xs={12} sm={3}>
+						<Grid item xs={12}>
 							<TextField
 								error={codeError?.error ? true : false}
 								helperText={codeError?.msg}
@@ -178,7 +175,7 @@ const CreateProduct = () => {
 								onChange={handleChange}
 							/>
 						</Grid>
-						<Grid item xs={12} sm={9}>
+						<Grid item xs={12}>
 							<FormControl fullWidth>
 								<InputLabel id="demo-simple-select-label">Status</InputLabel>
 								<Select
@@ -199,7 +196,7 @@ const CreateProduct = () => {
 								</Select>
 							</FormControl>
 						</Grid>
-						<Grid item xs={12} sm={3}>
+						<Grid item xs={12}>
 							<FormControl fullWidth>
 								<InputLabel id="demo-simple-select-label">Dock</InputLabel>
 								<Select
@@ -223,16 +220,12 @@ const CreateProduct = () => {
 						variant="contained"
 						sx={{ mt: 3, mb: 2 }}
 					>
-						Create Product
+						Create Bicycle
 					</Button>
 					<Grid container justifyContent="flex-end">
 						<Grid item>
-							<Link
-								style={{ color: '#648381' }}
-								to="/materials"
-								variant="body2"
-							>
-								Go to products
+							<Link style={{ color: '#648381' }} to="/bicycles" variant="body2">
+								Go to bicycles
 							</Link>
 						</Grid>
 					</Grid>

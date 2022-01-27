@@ -10,10 +10,13 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import ScrollToTop from './utils/ScrollToTop';
 import { isAuthenticated } from './auth/Authentication';
 import CreateBicycle from './pages/CreateBicycle';
-// import Restricted from './pages/Restricted';
+import CreatePerson from './pages/CreatePerson';
+import ClientRoute from './components/ClientRoute';
+import AdminRoute from './components/AdminRoute';
+import Restricted from './pages/Restricted';
+import ErrorPage from './pages/Error';
 
 function App() {
-	console.log('app render : ! @ @@ !');
 	const [authenticated, setAuthenticated] = useState(false);
 	const [darkMode, setDarkMode] = useState(true);
 
@@ -48,10 +51,13 @@ function App() {
 					path="/"
 					element={<Login setAuthenticated={setAuthenticated} />}
 				/>
-				<Route exact path="bicycle" element={<Bicycle />} />
-				<Route exact path="create_bicycle" element={<CreateBicycle />} />
-				<Route exact path="dock" element={<Dock />} />
-				<Route exact path="person" element={<Person />} />
+				<ClientRoute exact path="bicycle" element={<Bicycle />} />
+				<ClientRoute exact path="dock" element={<Dock />} />
+				<AdminRoute exact path="create_bicycle" element={<CreateBicycle />} />
+				<AdminRoute exact path="person" element={<Person />} />
+				<AdminRoute exact path="create_person" element={<CreatePerson />} />
+				<ClientRoute exact path="restricted" element={<Restricted />} />
+				<Route path="/*" element={<ErrorPage />} />
 			</Routes>
 		</ThemeProvider>
 	);
