@@ -67,26 +67,19 @@ const CreateProduct = () => {
 	const handleSubmit = (event) => {
 		event.preventDefault();
 		console.log(bicycleValues);
-		if (!validationHook.isValidCode(bicycleValues.Code)) {
-			console.log('valid error');
-			setCodeError({
-				error: true,
-				msg: 'Code must be minimum 1000 or maximum 9999',
-			});
+		if (validationHook.codeError(bicycleValues.Code)) {
+			setCodeError(validationHook.codeError(bicycleValues.Code));
 		} else {
 			setCodeError({ error: false, msg: '' });
 		}
-		if (!validationHook.isValidColor(bicycleValues.Color)) {
-			setColorError({
-				error: true,
-				msg: 'Color must be minimum 3 and maximum 100 characters long',
-			});
+		if (validationHook.colorError(bicycleValues.Color)) {
+			setColorError(validationHook.colorError(bicycleValues.Color));
 		} else {
 			setColorError({ error: false, msg: '' });
 		}
 		if (
-			validationHook.isValidColor(bicycleValues.Color) &&
-			validationHook.isValidCode(bicycleValues.Code)
+			!validationHook.colorError(bicycleValues.Color) &&
+			!validationHook.codeError(bicycleValues.Code)
 		) {
 			submitData(bicycleValues);
 		}
@@ -132,7 +125,7 @@ const CreateProduct = () => {
 					<CategoryIcon />
 				</Avatar>
 				<Typography component="h1" variant="h5">
-					Create New Product
+					Create New Bicycle
 				</Typography>
 				<Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
 					{error && (

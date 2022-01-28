@@ -46,8 +46,8 @@ const useValidationHook = () => {
 		}
 	};
 
-	const stateError = (enteredState) => {
-		if (enteredState === '') {
+	const stateError = (enteredState, dock) => {
+		if (enteredState === '' && !dock) {
 			return false;
 		}
 		if (enteredState.length >= 3 && enteredState.length <= 200) {
@@ -60,8 +60,8 @@ const useValidationHook = () => {
 		}
 	};
 
-	const cityError = (enteredCity) => {
-		if (enteredCity === '') {
+	const cityError = (enteredCity, dock) => {
+		if (enteredCity === '' && !dock) {
 			return false;
 		}
 		if (enteredCity.length >= 3 && enteredCity.length <= 200) {
@@ -74,8 +74,8 @@ const useValidationHook = () => {
 		}
 	};
 
-	const addressError = (enteredAddress) => {
-		if (enteredAddress === '') {
+	const addressError = (enteredAddress, dock) => {
+		if (enteredAddress === '' && !dock) {
 			return false;
 		}
 		if (enteredAddress.length >= 3 && enteredAddress.length <= 200) {
@@ -99,6 +99,17 @@ const useValidationHook = () => {
 			return {
 				error: true,
 				msg: 'Email must be minimum 10 and maximum 200 characters long and include @ and other email elements',
+			};
+		}
+	};
+
+	const bicycleDockNumberError = (enteredBicycleDockNumber) => {
+		if (enteredBicycleDockNumber >= 1 && enteredBicycleDockNumber <= 50) {
+			return false;
+		} else {
+			return {
+				error: true,
+				msg: 'Bicycle dock number (number of spaces for bicycles on a dock) must be minimum 1 or maximum 50',
 			};
 		}
 	};
@@ -136,6 +147,7 @@ const useValidationHook = () => {
 		emailError,
 		mobileNumberError,
 		bicycleCountError,
+		bicycleDockNumberError,
 	};
 };
 

@@ -1,12 +1,13 @@
 import React from 'react';
-import { Route, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { getUserData, isAuthenticated } from '../auth/Authentication';
 
 const TeacherRoute = ({ children }) => {
 	let role = '';
 	if (isAuthenticated()) {
-		role = getUserData().role;
+		role = getUserData().Role;
 	}
+	console.log('admin : ', role);
 	return isAuthenticated() && role === 'APPADMIN' ? (
 		children
 	) : (

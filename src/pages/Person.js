@@ -3,32 +3,45 @@ import UserWindow from '../utils/UserWindow';
 import usePersonRequest from '../api/usePersonRequest';
 import { DataGrid } from '@mui/x-data-grid';
 import LoadingPage from '../components/LoadingPage';
-import { Container, Box, Button } from '@mui/material';
+import { Container, Box, Button, Typography } from '@mui/material';
+
+function getFullName(params) {
+	return `${params.row.Name || ''} ${params.row.Surname || ''}`;
+}
 
 const columns = [
 	{ field: 'id', headerName: 'ID', flex: 1, hide: true },
-	{ field: 'Code', headerName: 'Code', flex: 1 },
-	{ field: 'Color', headerName: 'Color', flex: 1 },
-	{ field: 'Status', headerName: 'Status', flex: 1 },
+	{ field: 'Code', headerName: 'Code', width: 60 },
+	{ field: 'Role', headerName: 'Role', flex: 1 },
 	{
-		field: 'Client',
-		headerName: 'Client',
+		field: 'fullName',
+		headerName: 'Full name',
+		flex: 1,
+		valueGetter: getFullName,
+	},
+	{ field: 'State', headerName: 'State', flex: 1 },
+	{ field: 'City', headerName: 'City', flex: 1 },
+	{ field: 'Address', headerName: 'Address', flex: 1 },
+	{ field: 'Email', headerName: 'Email', flex: 1 },
+	{
+		field: 'MobileNumber',
+		headerName: 'Mobile number',
 		flex: 1,
 	},
 	{
-		field: 'Dock',
-		headerName: 'Dock',
+		field: 'BicycleCount',
+		headerName: 'Bicycle count',
 		flex: 1,
 		renderCell: (params) => (
 			<strong>
-				{params.value && (
+				{params.value >= 0 && (
 					<Button
 						variant="contained"
 						color="primary"
 						size="small"
 						style={{ marginLeft: 16 }}
 					>
-						Rent
+						{params.value}
 					</Button>
 				)}
 			</strong>
@@ -68,11 +81,17 @@ export default function Person() {
 			component="main"
 			sx={{
 				flexGrow: 1,
-				paddingTop: 10,
+				marginTop: 8,
 				paddingLeft: screen.dynamicWidth < 600 ? 0 : 25,
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
 			}}
 		>
-			<Container maxWidth="md">
+			<Typography component="h6" variant="h6">
+				Clients list
+			</Typography>
+			<Container maxWidth="lg">
 				<div
 					style={{
 						height: userScreenHeight - 112,
