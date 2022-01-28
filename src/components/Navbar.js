@@ -37,13 +37,13 @@ const Navbar = (props) => {
 
 	let drawerMenu = [
 		{
-			section: 'Bicycle',
+			section: 'Bicycles',
 			icon: <BikeScooterIcon />,
 			linkToSection: '/bicycle',
 			permission: 'CLIENT',
 		},
 		{
-			section: 'Dock',
+			section: 'Docks',
 			icon: <PlaceIcon />,
 			linkToSection: '/dock',
 			permission: 'CLIENT',

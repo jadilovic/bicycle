@@ -6,11 +6,6 @@ export const logout = () => {
 	localStorage.removeItem('user');
 };
 
-export const getUserToken = () => {
-	const userToken = localStorage.getItem('token');
-	return userToken;
-};
-
 export const getUserData = () => {
 	const jsonUserData = localStorage.getItem('user');
 	return JSON.parse(jsonUserData);

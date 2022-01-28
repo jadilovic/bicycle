@@ -17,6 +17,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
+import LoadingPage from '../components/LoadingPage';
 
 function Copyright() {
 	return (
@@ -39,29 +40,39 @@ const CreateProduct = () => {
 	const [codeError, setCodeError] = useState({ error: false, msg: '' });
 	const [colorError, setColorError] = useState({ error: false, msg: '' });
 	const [bicycleValues, setBicycleValues] = useState({
-		Code: 0,
+		Code: '',
 		Color: '',
-		Status: 'ALL_GOOD',
-		Client: null,
-		Dock: 1111,
+		Status: '',
+		Client: '',
+		Dock: '',
 	});
 	const screen = UserWindow();
 	const [docks, setDocks] = useState([]);
 	const [bicycleStatusList, setBicycleStatusList] = useState([]);
+	const [loading, setLoading] = useState(true);
 
 	const getBicycleStatusList = async () => {
 		const statuses = await bicycleAPI.getBicycleStatuses();
 		setBicycleStatusList(statuses);
+		getDocksList(statuses);
 	};
 
-	const getDocksList = async () => {
+	const getDocksList = async (statuses) => {
 		const docks = await dockAPI.getDocks();
 		setDocks(docks);
+		setBicycleValues({
+			...bicycleValues,
+			Status: statuses[0].EnumName,
+			Dock: docks[0].Code,
+		});
 	};
 
 	useEffect(() => {
+		setLoading(false);
+	}, [bicycleValues]);
+
+	useEffect(() => {
 		getBicycleStatusList();
-		getDocksList();
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const handleSubmit = (event) => {
@@ -90,11 +101,11 @@ const CreateProduct = () => {
 		const newBicycle = await bicycleAPI.createBicycle(bicycleData);
 		console.log('response: ', newBicycle);
 		setBicycleValues({
-			Code: 0,
+			Code: '',
 			Color: '',
-			Status: 'ALL_GOOD',
-			Client: null,
-			Dock: 1111,
+			Status: '',
+			Client: '',
+			Dock: '',
 		});
 	};
 
@@ -106,7 +117,9 @@ const CreateProduct = () => {
 		});
 	};
 
-	console.log(docks);
+	if (loading) {
+		return <LoadingPage />;
+	}
 
 	return (
 		<Container component="main" maxWidth="md">
@@ -170,10 +183,8 @@ const CreateProduct = () => {
 						</Grid>
 						<Grid item xs={12}>
 							<FormControl fullWidth>
-								<InputLabel id="demo-simple-select-label">Status</InputLabel>
+								<InputLabel>Status</InputLabel>
 								<Select
-									labelId="demo-simple-select-label"
-									id="demo-simple-select"
 									value={bicycleValues.Status}
 									label="Status"
 									name="Status"
@@ -191,18 +202,20 @@ const CreateProduct = () => {
 						</Grid>
 						<Grid item xs={12}>
 							<FormControl fullWidth>
-								<InputLabel id="demo-simple-select-label">Dock</InputLabel>
+								<InputLabel>Dock</InputLabel>
 								<Select
-									labelId="demo-simple-select-label"
-									id="demo-simple-select"
 									value={bicycleValues.Dock}
 									name="Dock"
 									label="Dock"
 									onChange={handleChange}
 								>
-									<MenuItem value={1111}>One</MenuItem>
-									<MenuItem value={2222}>Two</MenuItem>
-									<MenuItem value={3333}>Three</MenuItem>
+									{docks.map((dock, index) => {
+										return (
+											<MenuItem key={index} value={dock.Code}>
+												{dock.Code}
+											</MenuItem>
+										);
+									})}
 								</Select>
 							</FormControl>
 						</Grid>
@@ -217,7 +230,7 @@ const CreateProduct = () => {
 					</Button>
 					<Grid container justifyContent="flex-end">
 						<Grid item>
-							<Link style={{ color: '#648381' }} to="/bicycles" variant="body2">
+							<Link style={{ color: '#648381' }} to="/bicycle" variant="body2">
 								Go to bicycles
 							</Link>
 						</Grid>

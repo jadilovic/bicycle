@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import UserWindow from '../utils/UserWindow';
 import usePersonRequest from '../api/usePersonRequest';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import LoadingPage from '../components/LoadingPage';
 import { Container, Box, Button, Typography } from '@mui/material';
+import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 
 function getFullName(params) {
 	return `${params.row.Name || ''} ${params.row.Surname || ''}`;
@@ -102,6 +103,9 @@ export default function Person() {
 					<DataGrid
 						rows={rows}
 						columns={columns}
+						components={{
+							Toolbar: GridToolbar,
+						}}
 						// pageSize={5}
 						// rowsPerPageOptions={[5]}
 					/>

@@ -15,6 +15,7 @@ const columns = [
 		field: 'BicycleDockNumber',
 		headerName: 'Bicycle dock number',
 		flex: 1,
+		align: 'center',
 	},
 	{
 		field: 'BicycleCount',

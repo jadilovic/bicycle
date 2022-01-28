@@ -78,10 +78,34 @@ const useBicycleRequest = () => {
 		}
 	};
 
+	const modifyBicycle = async (modifiedBicycle) => {
+		console.log(modifiedBicycle);
+		try {
+			return axios({
+				method: 'POST',
+				url: `${ASSIG_PATH}api/v1001/Application/Bicycle/Modify`,
+				data: {
+					Token: REAL_TOKEN,
+					Request: modifiedBicycle,
+				},
+				headers: {
+					authorization: `Bearer ${REAL_TOKEN}`,
+				},
+			}).then((res) => {
+				console.log(res.data);
+				return res.data.Response;
+			});
+		} catch (err) {
+			console.log(err.response);
+			return err.response.data.msg;
+		}
+	};
+
 	return {
 		getBicycles,
 		getBicycleStatuses,
 		createBicycle,
+		modifyBicycle,
 	};
 };
 

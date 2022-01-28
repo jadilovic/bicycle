@@ -114,7 +114,11 @@ const CreateDock = () => {
 			!validationHook.cityError(dockValues.City) &&
 			!validationHook.addressError(dockValues.Address) &&
 			!validationHook.bicycleDockNumberError(dockValues.BicycleDockNumber) &&
-			!validationHook.bicycleCountError(dockValues.BicycleCount)
+			!validationHook.bicycleCountError(dockValues.BicycleCount) &&
+			!validationHook.dockCountError(
+				dockValues.BicycleDockNumber,
+				dockValues.BicycleCount
+			)
 		) {
 			submitData(dockValues);
 		}
