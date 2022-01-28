@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import usePersonRequest from '../api/usePersonRequest';
 import useDockRequest from '../api/useDockRequest';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import useValidationHook from '../utils/useValidationHook';
@@ -9,7 +8,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { Box, Alert } from '@mui/material';
-import CategoryIcon from '@mui/icons-material/Category';
+import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import UserWindow from '../utils/UserWindow';
@@ -32,7 +31,7 @@ function Copyright() {
 }
 
 const CreateDock = () => {
-	const personAPI = usePersonRequest();
+	const dockAPI = useDockRequest();
 	const validationHook = useValidationHook();
 	const [error, setError] = useState(null);
 	const [codeError, setCodeError] = useState({ error: false, msg: '' });
@@ -95,6 +94,21 @@ const CreateDock = () => {
 			setBicycleCountError({ error: false, msg: '' });
 		}
 		if (
+			validationHook.dockCountError(
+				dockValues.BicycleDockNumber,
+				dockValues.BicycleCount
+			)
+		) {
+			setBicycleCountError(
+				validationHook.dockCountError(
+					dockValues.BicycleDockNumber,
+					dockValues.BicycleCount
+				)
+			);
+		} else {
+			setBicycleCountError({ error: false, msg: '' });
+		}
+		if (
 			!validationHook.codeError(dockValues.Code) &&
 			!validationHook.stateError(dockValues.State) &&
 			!validationHook.cityError(dockValues.City) &&
@@ -102,45 +116,32 @@ const CreateDock = () => {
 			!validationHook.bicycleDockNumberError(dockValues.BicycleDockNumber) &&
 			!validationHook.bicycleCountError(dockValues.BicycleCount)
 		) {
-			if (dockValues.State === '') {
-				dockValues.State = null;
-			}
-			if (dockValues.City === '') {
-				dockValues.City = null;
-			}
-			if (dockValues.Address === '') {
-				dockValues.Address = null;
-			}
 			submitData(dockValues);
 		}
 	};
 
-	const submitData = async (personData) => {
-		console.log('request : ', personData);
-		let newPerson;
+	const submitData = async (dockData) => {
+		console.log('request : ', dockData);
+		let newDock;
 		try {
-			newPerson = await personAPI.createPerson(personData);
+			newDock = await dockAPI.createDock(dockData);
 		} catch (error) {
 			setError(error.response.data.msg);
 		}
-		console.log('response: ', newPerson);
-		setdockValues({
+		console.log('response : ', newDock);
+		setDockValues({
 			Code: 0,
-			Role: 'CLIENT',
-			Name: '',
-			Surname: '',
 			State: '',
 			City: '',
 			Address: '',
-			Email: '',
-			MobileNumber: '',
+			BicycleDockNumber: 0,
 			BicycleCount: 0,
 		});
 	};
 
 	const handleChange = (event) => {
 		event.preventDefault();
-		setdockValues({
+		setDockValues({
 			...dockValues,
 			[event.target.name]: event.target.value,
 		});
@@ -162,10 +163,10 @@ const CreateDock = () => {
 				}}
 			>
 				<Avatar sx={{ m: 1, bgcolor: '#648381' }}>
-					<CategoryIcon />
+					<AddLocationAltIcon />
 				</Avatar>
 				<Typography component="h1" variant="h5">
-					Create New Client
+					Create New Dock
 				</Typography>
 				<Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
 					{error && (
@@ -196,32 +197,9 @@ const CreateDock = () => {
 						</Grid>
 						<Grid item xs={12}>
 							<TextField
-								error={nameError.error ? true : false}
-								helperText={nameError?.msg}
-								name="Name"
-								required
-								fullWidth
-								label="Name"
-								value={dockValues.Name}
-								onChange={handleChange}
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<TextField
-								error={surnameError.error ? true : false}
-								helperText={surnameError?.msg}
-								name="Surname"
-								required
-								fullWidth
-								label="Surname"
-								value={dockValues.Surname}
-								onChange={handleChange}
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<TextField
 								error={stateError.error ? true : false}
 								helperText={stateError?.msg}
+								required
 								name="State"
 								fullWidth
 								label="State"
@@ -233,6 +211,7 @@ const CreateDock = () => {
 							<TextField
 								error={cityError.error ? true : false}
 								helperText={cityError?.msg}
+								required
 								name="City"
 								fullWidth
 								label="City"
@@ -244,6 +223,7 @@ const CreateDock = () => {
 							<TextField
 								error={addressError.error ? true : false}
 								helperText={addressError?.msg}
+								required
 								name="Address"
 								fullWidth
 								label="Address"
@@ -253,25 +233,14 @@ const CreateDock = () => {
 						</Grid>
 						<Grid item xs={12}>
 							<TextField
-								error={emailError.error ? true : false}
-								helperText={emailError?.msg}
-								name="Email"
+								error={bicycleDockNumberError.error ? true : false}
+								helperText={bicycleDockNumberError?.msg}
+								name="BicycleDockNumber"
 								required
 								fullWidth
-								label="Email"
-								value={dockValues.Email}
-								onChange={handleChange}
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<TextField
-								error={mobileNumberError.error ? true : false}
-								helperText={mobileNumberError?.msg}
-								name="MobileNumber"
-								required
-								fullWidth
-								label="Mobile Number"
-								value={dockValues.MobileNumber}
+								label="Bicycle Dock Number (Number of docks for bicycles)"
+								type="number"
+								value={dockValues.BicycleDockNumber}
 								onChange={handleChange}
 							/>
 						</Grid>
@@ -294,12 +263,12 @@ const CreateDock = () => {
 						variant="contained"
 						sx={{ mt: 3, mb: 2 }}
 					>
-						Create Bicycle
+						Create Dock
 					</Button>
 					<Grid container justifyContent="flex-end">
 						<Grid item>
-							<Link style={{ color: '#648381' }} to="/person" variant="body2">
-								Go to bicycles
+							<Link style={{ color: '#648381' }} to="/dock" variant="body2">
+								Go to docks
 							</Link>
 						</Grid>
 					</Grid>
@@ -310,4 +279,4 @@ const CreateDock = () => {
 	);
 };
 
-export default CreateProduct;
+export default CreateDock;

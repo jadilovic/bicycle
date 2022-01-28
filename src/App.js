@@ -11,6 +11,7 @@ import ScrollToTop from './utils/ScrollToTop';
 import { isAuthenticated } from './auth/Authentication';
 import CreateBicycle from './pages/CreateBicycle';
 import CreatePerson from './pages/CreatePerson';
+import CreateDock from './pages/CreateDock';
 import ClientRoute from './components/ClientRoute';
 import AdminRoute from './components/AdminRoute';
 import Restricted from './pages/Restricted';
@@ -62,6 +63,15 @@ function App() {
 				/>
 				<Route
 					exact
+					path="create_bicycle"
+					element={
+						<AdminRoute>
+							<CreateBicycle />
+						</AdminRoute>
+					}
+				/>
+				<Route
+					exact
 					path="dock"
 					element={
 						<ClientRoute>
@@ -71,10 +81,10 @@ function App() {
 				/>
 				<Route
 					exact
-					path="create_bicycle"
+					path="create_dock"
 					element={
 						<AdminRoute>
-							<CreateBicycle />
+							<CreateDock />
 						</AdminRoute>
 					}
 				/>

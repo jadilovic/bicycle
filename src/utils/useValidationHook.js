@@ -125,6 +125,17 @@ const useValidationHook = () => {
 		}
 	};
 
+	const dockCountError = (enteredBicycleDockNumber, enteredBicycleCount) => {
+		if (Number(enteredBicycleDockNumber) >= Number(enteredBicycleCount)) {
+			return false;
+		} else {
+			return {
+				error: true,
+				msg: 'Bicycle count can have maximum value of Bicycle Dock Number',
+			};
+		}
+	};
+
 	const mobileNumberError = (enteredMobileNumber) => {
 		if (enteredMobileNumber.length >= 10 && enteredMobileNumber.length <= 30) {
 			return false;
@@ -148,6 +159,7 @@ const useValidationHook = () => {
 		mobileNumberError,
 		bicycleCountError,
 		bicycleDockNumberError,
+		dockCountError,
 	};
 };
 
