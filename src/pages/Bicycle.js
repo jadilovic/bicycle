@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import UserWindow from '../utils/UserWindow';
 import { getUserData } from '../auth/Authentication';
 import useBicycleRequest from '../api/useBicycleRequest';
@@ -20,12 +20,33 @@ export default function Bicycle() {
 	const [loading, setLoading] = useState(true);
 	const [rows, setRows] = useState([]);
 	const bicycleAPI = useBicycleRequest();
-	const [bicycleStatus, setBicycleStatus] = useState('');
+	const [bicycle, setBicycle] = useState({});
+	const [status, setStatus] = useState('');
 	const user = getUserData();
+	const isMounted = useRef(false);
 
 	const handleChange = (event) => {
-		setBicycleStatus(event.target.value);
+		event.preventDefault();
+		setStatus(event.target.value);
 	};
+
+	const modifyBicycle = async () => {
+		delete bicycle.id;
+		bicycle.Status = status;
+		const modifiedBicycle = await bicycleAPI.modifyBicycle(bicycle);
+		console.log(modifiedBicycle);
+		displayBicycles();
+	};
+
+	useEffect(() => {
+		if (isMounted.current) {
+			console.log('test');
+			modifyBicycle();
+			setLoading(true);
+		} else {
+			isMounted.current = true;
+		}
+	}, [status]);
 
 	const isClient = () => {
 		if (user.Role === 'CLIENT') {
@@ -44,6 +65,10 @@ export default function Bicycle() {
 		console.log(modifiedBicycle);
 	};
 
+	const getStatus = () => {
+		return 'Hello';
+	};
+
 	const columns = [
 		{ field: 'id', headerName: 'ID', flex: 1, hide: true },
 		{ field: 'Code', headerName: 'Code', flex: 1 },
@@ -52,17 +77,20 @@ export default function Bicycle() {
 			field: 'Status',
 			headerName: 'Status',
 			width: 165,
-			renderCell: (params) => (
-				<Select
-					style={{ width: 165 }}
-					value={params.value}
-					onChange={handleChange}
-				>
-					<MenuItem value="ALL_GOOD">All good</MenuItem>
-					<MenuItem value="LITTLE_DAMAGE">Little damage</MenuItem>
-					<MenuItem value="WRECKED">Wrecked</MenuItem>
-				</Select>
-			),
+			renderCell: isClient()
+				? null
+				: (params) => (
+						<Select
+							style={{ width: 165 }}
+							value={params.value}
+							onChange={handleChange}
+							onClick={() => setBicycle(params.row)}
+						>
+							<MenuItem value="ALL_GOOD">All good</MenuItem>
+							<MenuItem value="LITTLE_DAMAGE">Little damage</MenuItem>
+							<MenuItem value="WRECKED">Wrecked</MenuItem>
+						</Select>
+				  ),
 		},
 		{
 			field: 'Client',
@@ -107,7 +135,8 @@ export default function Bicycle() {
 		displayBicycles();
 	}, []);
 
-	console.log(bicycleStatus);
+	console.log(bicycle);
+	console.log(status);
 
 	if (loading) {
 		return <LoadingPage />;

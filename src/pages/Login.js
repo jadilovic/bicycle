@@ -159,8 +159,8 @@ export default function SignIn(props) {
 						<Grid item xs>
 							<Typography>Client Email:</Typography>
 						</Grid>
-						<Grid item md>
-							<Typography>johnie.done@home.com</Typography>
+						<Grid item xs>
+							<Typography align="right">john.doe@com.com</Typography>
 						</Grid>
 					</Grid>
 					<Grid container>
