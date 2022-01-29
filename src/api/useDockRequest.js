@@ -51,9 +51,34 @@ const useDockRequest = () => {
 			});
 	};
 
+	const modifyDock = async (dockData) => {
+		return axios({
+			method: 'POST',
+			url: `${ASSIG_PATH}api/v1001/Application/Dock/Modify`,
+			data: {
+				Token: REAL_TOKEN,
+				Request: dockData,
+			},
+			headers: {
+				authorization: `Bearer ${REAL_TOKEN}`,
+			},
+		})
+			.then((res) => {
+				console.log(res.data);
+				return res.data.Response;
+			})
+			.catch((err) => {
+				console.log(err.response);
+				console.log(err.response.data);
+				console.log(err.response.data.msg);
+				return err;
+			});
+	};
+
 	return {
 		getDocks,
 		createDock,
+		modifyDock,
 	};
 };
 

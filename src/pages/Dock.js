@@ -7,7 +7,7 @@ import { Container, Box, Button, Typography } from '@mui/material';
 
 const columns = [
 	{ field: 'id', headerName: 'ID', flex: 1, hide: true },
-	{ field: 'Code', headerName: 'Code', width: 60 },
+	{ field: 'Code', headerName: 'Code', width: 70 },
 	{ field: 'State', headerName: 'State', flex: 1 },
 	{ field: 'City', headerName: 'City', flex: 1 },
 	{ field: 'Address', headerName: 'Address', flex: 1 },
@@ -21,6 +21,7 @@ const columns = [
 		field: 'BicycleCount',
 		headerName: 'Bicycle count',
 		flex: 1,
+		align: 'center',
 		renderCell: (params) => (
 			<strong>
 				{params.value >= 0 && (
@@ -57,8 +58,6 @@ export default function Dock() {
 	useEffect(() => {
 		displayDocks();
 	}, []);
-
-	console.log(rows);
 
 	if (loading) {
 		return <LoadingPage />;

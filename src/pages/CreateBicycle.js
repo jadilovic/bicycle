@@ -59,7 +59,10 @@ const CreateProduct = () => {
 
 	const getDocksList = async (statuses) => {
 		const docks = await dockAPI.getDocks();
-		setDocks(docks);
+		const availableDocks = docks.filter(
+			(dock) => dock.BicycleDockNumber > dock.BicycleCount
+		);
+		setDocks(availableDocks);
 		setBicycleValues({
 			...bicycleValues,
 			Status: statuses[0].EnumName,
@@ -96,9 +99,17 @@ const CreateProduct = () => {
 		}
 	};
 
+	const modifyDock = async (dockCode) => {
+		const selectedDock = docks.find((dock) => dock.Code === dockCode);
+		selectedDock.BicycleCount = selectedDock.BicycleCount + 1;
+		const modifiedDock = await dockAPI.modifyDock(selectedDock);
+		console.log('modified dock : ', modifiedDock);
+	};
+
 	const submitData = async (bicycleData) => {
 		console.log('request : ', bicycleData);
 		const newBicycle = await bicycleAPI.createBicycle(bicycleData);
+		modifyDock(newBicycle.Dock);
 		console.log('response: ', newBicycle);
 		setBicycleValues({
 			Code: '',
@@ -212,7 +223,7 @@ const CreateProduct = () => {
 									{docks.map((dock, index) => {
 										return (
 											<MenuItem key={index} value={dock.Code}>
-												{dock.Code}
+												{`${dock.Code} - ${dock.Address}, ${dock.City}, ${dock.State}`}
 											</MenuItem>
 										);
 									})}

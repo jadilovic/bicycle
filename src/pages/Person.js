@@ -42,7 +42,7 @@ const columns = [
 						size="small"
 						style={{ marginLeft: 16 }}
 					>
-						{params.value}
+						{params.value ? params.value : 0}
 					</Button>
 				)}
 			</strong>
