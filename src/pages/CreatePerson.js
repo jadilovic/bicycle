@@ -319,12 +319,12 @@ const CreateProduct = () => {
 						variant="contained"
 						sx={{ mt: 3, mb: 2 }}
 					>
-						Create Bicycle
+						Create Client
 					</Button>
 					<Grid container justifyContent="flex-end">
 						<Grid item>
 							<Link style={{ color: '#648381' }} to="/person" variant="body2">
-								Go to bicycles
+								Go to clients
 							</Link>
 						</Grid>
 					</Grid>

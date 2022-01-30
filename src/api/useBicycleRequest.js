@@ -101,11 +101,37 @@ const useBicycleRequest = () => {
 		}
 	};
 
+	const deleteBicycle = async (bicycleCode) => {
+		console.log(bicycleCode);
+		try {
+			return axios({
+				method: 'POST',
+				url: `${ASSIG_PATH}api/v1001/Application/Bicycle/Remove`,
+				data: {
+					Token: REAL_TOKEN,
+					Request: {
+						Code: bicycleCode,
+					},
+				},
+				headers: {
+					authorization: `Bearer ${REAL_TOKEN}`,
+				},
+			}).then((res) => {
+				console.log(res.data);
+				return res.data.Response;
+			});
+		} catch (err) {
+			console.log(err.response);
+			return err.response.data.msg;
+		}
+	};
+
 	return {
 		getBicycles,
 		getBicycleStatuses,
 		createBicycle,
 		modifyBicycle,
+		deleteBicycle,
 	};
 };
 

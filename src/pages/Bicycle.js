@@ -5,6 +5,7 @@ import useBicycleRequest from '../api/useBicycleRequest';
 import usePersonRequest from '../api/usePersonRequest';
 import useDockRequest from '../api/useDockRequest';
 import { DataGrid } from '@mui/x-data-grid';
+import DeleteIcon from '@mui/icons-material/Delete';
 import LoadingPage from '../components/LoadingPage';
 import {
 	Container,
@@ -13,12 +14,15 @@ import {
 	Typography,
 	Select,
 	MenuItem,
+	Grid,
+	IconButton,
 } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import SelectDock from '../components/SelectDock';
 
 export default function Bicycle() {
 	const screen = UserWindow();
@@ -34,9 +38,17 @@ export default function Bicycle() {
 	const user = getUserData();
 	const isMounted = useRef(false);
 	const [openDialog, setOpenDialog] = useState(false);
+	const [openSelectDockDialog, setOpenSelectDockDialog] = useState(false);
+	const [rentedBicycles, setRentedBicycles] = useState([]);
+	const [isPedaling, setIsPedaling] = useState(false);
+	const [bicyclesReturnDock, setBicyclesReturnDock] = useState(0);
 
 	const handleDialogClose = () => {
 		setOpenDialog(false);
+	};
+
+	const handleSelectDockDialogClose = () => {
+		setOpenSelectDockDialog(false);
 	};
 
 	function getClient(params) {
@@ -64,12 +76,23 @@ export default function Bicycle() {
 
 	useEffect(() => {
 		if (isMounted.current) {
+			console.log('changed STATUS test ', bicyclesReturnDock);
 			modifyBicycle();
 			setLoading(true);
 		} else {
-			isMounted.current = true;
+			//		isMounted.current = true;
 		}
 	}, [status]);
+
+	useEffect(() => {
+		if (isMounted.current) {
+			setLoading(true);
+			console.log('changed DOCK test ', bicyclesReturnDock);
+			returnBicyclesToDock(bicyclesReturnDock);
+		} else {
+			isMounted.current = true;
+		}
+	}, [bicyclesReturnDock]);
 
 	const isClient = () => {
 		if (user.Role === 'CLIENT') {
@@ -80,26 +103,34 @@ export default function Bicycle() {
 	};
 
 	const modifyBicycleRent = async (bicycle) => {
+		// Remove dock code and add client code to rented bicycle
 		delete bicycle.id;
 		bicycle.Dock = null;
 		bicycle.Client = user.Code;
 		console.log(bicycle);
 		const modifiedBicycle = await bicycleAPI.modifyBicycle(bicycle);
 		console.log(modifiedBicycle);
+		// Add rented bicycle to a list of rented bicycles
+		rentedBicycles.push(modifiedBicycle);
+		setRentedBicycles([...rentedBicycles]);
 		modifyPersonRent();
 	};
 
 	const modifyPersonRent = async () => {
-		const userBicycleCount = user.BicycleCount;
-		user.BicycleCount = userBicycleCount + 1;
-		console.log(user);
+		// Add new bicycle to client
+		user.BicycleCount = user.BicycleCount + 1;
+		console.log('before api request : ', user);
 		const modifiedPerson = await personAPI.modifyPerson(user);
+		console.log('before saving local storage user : ', modifiedPerson);
 		localStorage.setItem('user', JSON.stringify(modifiedPerson));
+		localStorage.setItem('rentedBicycles', JSON.stringify(rentedBicycles));
 		console.log(modifiedPerson);
 		displayBicycles();
 	};
 
 	const modifyDockRent = async (bicycle) => {
+		// Remove rented bicycle from a dock
+		setLoading(true);
 		console.log(bicycle);
 		const dockList = await dockAPI.getDocks();
 		console.log(dockList);
@@ -107,14 +138,54 @@ export default function Bicycle() {
 		console.log(selectedDock);
 		const dockBicyclesCount = selectedDock.BicycleCount;
 		selectedDock.BicycleCount = dockBicyclesCount - 1;
-		const modifiedDock = dockAPI.modifyDock(selectedDock);
+		const modifiedDock = await dockAPI.modifyDock(selectedDock);
 		console.log(modifiedDock);
 		modifyBicycleRent(bicycle);
+	};
+
+	const modifyBicycleReturn = async (bicycle, returnDock, arrLength, index) => {
+		delete bicycle.id;
+		bicycle.Dock = returnDock;
+		bicycle.Client = null;
+		console.log(bicycle);
+		const modifiedBicycle = await bicycleAPI.modifyBicycle(bicycle);
+		console.log(modifiedBicycle);
+		if (arrLength === index + 1) {
+			displayBicycles();
+		}
+		modifyPersonReturn();
+	};
+
+	const modifyPersonReturn = async () => {
+		user.BicycleCount = user.BicycleCount - 1;
+		console.log(user);
+		const modifiedPerson = await personAPI.modifyPerson(user);
+		localStorage.setItem('user', JSON.stringify(modifiedPerson));
+		localStorage.removeItem('rentedBicycles');
+		localStorage.removeItem('isPedaling');
+		setRentedBicycles([]);
+		setIsPedaling(false);
+		console.log(modifiedPerson);
+		// displayBicycles();
+	};
+
+	const modifyDockReturn = async (bicycle, returnDock, arrLength, index) => {
+		console.log(bicycle);
+		const dockList = await dockAPI.getDocks();
+		console.log(dockList);
+		const selectedDock = dockList.find((dock) => dock.Code === returnDock);
+		console.log(selectedDock);
+		selectedDock.BicycleCount = selectedDock.BicycleCount + 1;
+		const modifiedDock = await dockAPI.modifyDock(selectedDock);
+		console.log(modifiedDock);
+		modifyBicycleReturn(bicycle, returnDock, arrLength, index);
 	};
 
 	const handleRent = (bicycle) => {
 		if (user.BicycleCount === 50) {
 			setOpenDialog(true);
+		} else if (user.Role === 'APPADMIN') {
+			alert('Admin is not allowed to rent bicycles');
 		} else {
 			modifyDockRent(bicycle);
 		}
@@ -122,6 +193,7 @@ export default function Bicycle() {
 
 	const displayBicycles = async () => {
 		const bicycles = await bicycleAPI.getBicycles();
+		console.log(bicycles);
 		bicycles.forEach(function (element, index) {
 			element.id = index + 1;
 		});
@@ -129,15 +201,91 @@ export default function Bicycle() {
 		setLoading(false);
 	};
 
-	const getBicycleStatuses = async () => {
+	const returnBicyclesToDock = async (dockCode) => {
+		//	const bicycles = await bicycleAPI.getBicycles();
+		console.log(rentedBicycles);
+		// for (let bicycle of rentedBicycles) {
+		// 	//	console.log(bicycle);
+		// 	await modifyDockReturn(bicycle, dockCode);
+		// }
+		for (let index = 0; index < rentedBicycles.length; index++) {
+			await modifyDockReturn(
+				rentedBicycles[index],
+				dockCode,
+				rentedBicycles.length,
+				index
+			);
+		}
+		//	displayBicycles();
+	};
+
+	const getBicycleStatuses = async (rentedBicycles, isPedaling) => {
 		const bicycleStatuses = await bicycleAPI.getBicycleStatuses();
 		setBicycleStatuses(bicycleStatuses);
-		displayBicycles();
+		// returnBicyclesToDock(1111);
+		//	modifyDockReturn({}, 1111);
+		console.log('bicycle statuses start : ', rentedBicycles.length, isPedaling);
+
+		if (rentedBicycles.length > 0 && isPedaling) {
+			console.log('start pedaling test');
+			startPedaling(rentedBicycles);
+		} else {
+			displayBicycles();
+		}
+		console.log('bicycle statuses end : ', rentedBicycles.length, isPedaling);
 	};
 
 	useEffect(() => {
-		getBicycleStatuses();
+		const localStorageRentedBicycles = JSON.parse(
+			localStorage.getItem('rentedBicycles') || '[]'
+		);
+		if (localStorageRentedBicycles) {
+			setRentedBicycles(localStorageRentedBicycles);
+		}
+		const localStorageIsPedaling = JSON.parse(
+			localStorage.getItem('isPedaling')
+		);
+		if (localStorageIsPedaling) {
+			setIsPedaling(localStorageIsPedaling);
+		}
+		getBicycleStatuses(localStorageRentedBicycles, localStorageIsPedaling);
 	}, []);
+
+	const startPedaling = (rentedBicycles) => {
+		if (user.Role === 'APPADMIN') {
+			alert('Admin is not allowed to rent or start pedaling!');
+		} else {
+			setLoading(true);
+			console.log('test : ', rentedBicycles);
+			rentedBicycles.forEach(function (element, index) {
+				element.id = index + 1;
+			});
+			setIsPedaling(true);
+			localStorage.setItem('isPedaling', true);
+			setRows(rentedBicycles);
+			setLoading(false);
+		}
+	};
+
+	const stopPedaling = () => {
+		setOpenSelectDockDialog(true);
+	};
+
+	const deleteBicycle = async (bicycleObject) => {
+		setLoading(true);
+		console.log('delete bicycle : ', bicycleObject);
+		const deletedBicycle = await bicycleAPI.deleteBicycle(bicycleObject.Code);
+		console.log('deleted bicycle : ', deletedBicycle);
+		const docksList = await dockAPI.getDocks();
+		const dockObject = docksList.find(
+			(dock) => dock.Code === bicycleObject.Dock
+		);
+		console.log('to be modified dock : ', dockObject);
+		dockObject.BicycleCount = dockObject.BicycleCount - 1;
+		const modifiedDock = await dockAPI.modifyDock(dockObject);
+		console.log('modified dock after delet : ', modifiedDock);
+		displayBicycles();
+	};
 
 	const columns = [
 		{ field: 'id', headerName: 'ID', flex: 1, hide: true },
@@ -191,7 +339,31 @@ export default function Bicycle() {
 				</strong>
 			),
 		},
+		{
+			field: 'Delete',
+			headerName: 'Delete',
+			flex: 1,
+			align: 'center',
+			hide: isClient(),
+			renderCell: (params) => (
+				<strong>
+					<IconButton
+						disabled={
+							params.row.Status !== 'WRECKED' || params.row.Dock === null
+						}
+						aria-label="delete"
+						color="error"
+						style={{ marginLeft: 16 }}
+						onClick={() => deleteBicycle(params.row)}
+					>
+						<DeleteIcon />
+					</IconButton>
+				</strong>
+			),
+		},
 	];
+
+	console.log(rentedBicycles.length === 0 || isPedaling);
 
 	if (loading) {
 		return <LoadingPage />;
@@ -209,37 +381,62 @@ export default function Bicycle() {
 				alignItems: 'center',
 			}}
 		>
-			<Typography component="h6" variant="h6">
-				Bicycles list
-			</Typography>
-			<Container maxWidth="md">
+			<Container maxWidth="lg">
+				<Grid
+					justify="space-between"
+					container
+					sx={{ paddingTop: 1, paddingBottom: 1 }}
+				>
+					<Grid item xs={4} container>
+						<Typography component="h6" variant="h6">
+							Bicycles list
+						</Typography>
+					</Grid>
+					<Grid item xs={4} container justifyContent="flex">
+						<Button
+							disabled={rentedBicycles.length === 0 || isPedaling}
+							variant="contained"
+							color="warning"
+							size="small"
+							style={{ marginLeft: 16 }}
+							onClick={() => startPedaling(rentedBicycles)}
+						>
+							Start pedaling
+						</Button>
+					</Grid>
+					<Grid item xs={4} container justifyContent="flex-end">
+						<Button
+							disabled={rentedBicycles.length === 0 || !isPedaling}
+							variant="contained"
+							color="error"
+							size="small"
+							style={{ marginLeft: 16 }}
+							onClick={() => stopPedaling()}
+						>
+							Stop pedaling
+						</Button>
+					</Grid>
+				</Grid>
 				<div
 					style={{
 						height: userScreenHeight - 112,
 						width: '100%',
-						cursor: 'pointer',
+						//	cursor: 'pointer',
 					}}
 				>
 					<DataGrid
 						rows={rows}
 						columns={columns}
-						// pageSize={5}
-						// rowsPerPageOptions={[5]}
+						pageSize={7}
+						rowsPerPageOptions={[7]}
 					/>
 				</div>
 			</Container>
 			<div>
-				<Dialog
-					open={openDialog}
-					onClose={handleDialogClose}
-					aria-labelledby="alert-dialog-title"
-					aria-describedby="alert-dialog-description"
-				>
-					<DialogTitle id="alert-dialog-title">
-						{'Maximum number of bicycles reached!'}
-					</DialogTitle>
+				<Dialog open={openDialog} onClose={handleDialogClose}>
+					<DialogTitle>{'Maximum number of bicycles reached!'}</DialogTitle>
 					<DialogContent>
-						<DialogContentText id="alert-dialog-description">
+						<DialogContentText>
 							You have reached maximum number of bicycles that you can rent! You
 							have to return rented bicycles before you can rent new ones.
 						</DialogContentText>
@@ -247,6 +444,31 @@ export default function Bicycle() {
 					<DialogActions>
 						<Button onClick={handleDialogClose} autoFocus>
 							OK
+						</Button>
+					</DialogActions>
+				</Dialog>
+			</div>
+			<div>
+				<Dialog
+					fullWidth={true}
+					maxWidth="lg"
+					open={openSelectDockDialog}
+					onClose={handleSelectDockDialogClose}
+				>
+					<DialogContent>
+						<SelectDock
+							setBicyclesReturnDock={setBicyclesReturnDock}
+							numberOfBicycles={rentedBicycles.length}
+							setOpenSelectDockDialog={setOpenSelectDockDialog}
+						/>
+					</DialogContent>
+					<DialogActions>
+						<Button
+							variant="contained"
+							onClick={handleSelectDockDialogClose}
+							autoFocus
+						>
+							Back
 						</Button>
 					</DialogActions>
 				</Dialog>

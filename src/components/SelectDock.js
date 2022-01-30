@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import UserWindow from '../utils/UserWindow';
 import useDockRequest from '../api/useDockRequest';
 import { DataGrid } from '@mui/x-data-grid';
-import LoadingPage from '../components/LoadingPage';
+import LoadingPage from './LoadingPage';
 import { Container, Box, Button, Typography } from '@mui/material';
 
 const columns = [
@@ -22,24 +22,12 @@ const columns = [
 		headerName: 'Bicycle count',
 		flex: 1,
 		align: 'center',
-		renderCell: (params) => (
-			<strong>
-				{params.value >= 0 && (
-					<Button
-						variant="contained"
-						color="primary"
-						size="small"
-						style={{ marginLeft: 16 }}
-					>
-						{params.value}
-					</Button>
-				)}
-			</strong>
-		),
 	},
 ];
 
-export default function Dock() {
+export default function SelectDock(props) {
+	const { setBicyclesReturnDock, numberOfBicycles, setOpenSelectDockDialog } =
+		props;
 	const screen = UserWindow();
 	const userScreenHeight = window.innerHeight;
 	const [loading, setLoading] = useState(true);
@@ -48,10 +36,13 @@ export default function Dock() {
 
 	const displayDocks = async () => {
 		const docks = await dockAPI.getDocks();
-		docks.forEach(function (element, index) {
+		const filteredDocks = docks.filter(
+			(dock) => dock.BicycleDockNumber - dock.BicycleCount >= numberOfBicycles
+		);
+		filteredDocks.forEach(function (element, index) {
 			element.id = index + 1;
 		});
-		setRows(docks);
+		setRows(filteredDocks);
 		setLoading(false);
 	};
 
@@ -68,29 +59,34 @@ export default function Dock() {
 			component="main"
 			sx={{
 				flexGrow: 1,
-				marginTop: 8,
-				paddingLeft: screen.dynamicWidth < 600 ? 0 : 25,
+				// marginTop: 8,
+				// paddingLeft: screen.dynamicWidth < 600 ? 0 : 25,
 				display: 'flex',
 				flexDirection: 'column',
 				alignItems: 'center',
 			}}
 		>
 			<Typography component="h6" variant="h6">
-				Docks list
+				Select dock by clicking the row
 			</Typography>
 			<Container maxWidth="lg">
 				<div
 					style={{
-						height: userScreenHeight - 112,
+						height: userScreenHeight - 250,
 						width: '100%',
-						//	cursor: 'pointer',
+						cursor: 'pointer',
 					}}
 				>
 					<DataGrid
 						rows={rows}
 						columns={columns}
-						// pageSize={5}
-						// rowsPerPageOptions={[5]}
+						onRowClick={(props) => {
+							console.log(props.row);
+							setBicyclesReturnDock(props.row.Code);
+							setOpenSelectDockDialog(false);
+						}}
+						pageSize={7}
+						rowsPerPageOptions={[7]}
 					/>
 				</div>
 			</Container>

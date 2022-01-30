@@ -9,7 +9,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { Box, Alert } from '@mui/material';
-import CategoryIcon from '@mui/icons-material/Category';
+import PedalBikeIcon from '@mui/icons-material/PedalBike';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import UserWindow from '../utils/UserWindow';
@@ -146,7 +146,7 @@ const CreateProduct = () => {
 				}}
 			>
 				<Avatar sx={{ m: 1, bgcolor: '#648381' }}>
-					<CategoryIcon />
+					<PedalBikeIcon />
 				</Avatar>
 				<Typography component="h1" variant="h5">
 					Create New Bicycle
