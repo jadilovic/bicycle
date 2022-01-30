@@ -254,6 +254,7 @@ export default function Bicycle() {
 	const startPedaling = (rentedBicycles) => {
 		if (user.Role === 'APPADMIN') {
 			alert('Admin is not allowed to rent or start pedaling!');
+			displayBicycles();
 		} else {
 			setLoading(true);
 			console.log('test : ', rentedBicycles);
@@ -268,7 +269,11 @@ export default function Bicycle() {
 	};
 
 	const stopPedaling = () => {
-		setOpenSelectDockDialog(true);
+		if (user.Role === 'APPADMIN') {
+			alert('Admin is not allowed to use Client options!');
+		} else {
+			setOpenSelectDockDialog(true);
+		}
 	};
 
 	const deleteBicycle = async (bicycleObject) => {
