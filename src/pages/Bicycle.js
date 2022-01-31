@@ -202,12 +202,7 @@ export default function Bicycle() {
 	};
 
 	const returnBicyclesToDock = async (dockCode) => {
-		//	const bicycles = await bicycleAPI.getBicycles();
 		console.log(rentedBicycles);
-		// for (let bicycle of rentedBicycles) {
-		// 	//	console.log(bicycle);
-		// 	await modifyDockReturn(bicycle, dockCode);
-		// }
 		for (let index = 0; index < rentedBicycles.length; index++) {
 			await modifyDockReturn(
 				rentedBicycles[index],
@@ -216,14 +211,48 @@ export default function Bicycle() {
 				index
 			);
 		}
-		//	displayBicycles();
 	};
+
+	// ONLY USED IN DEVELOPMENT
+	// const emptyDock = async (dock) => {
+	// 	if (dock.Code === 4444) {
+	// 		dock.BicycleCount = 0;
+	// 		dock.BicycleDockNumber = 2;
+	// 	} else {
+	// 		dock.BicycleCount = 0;
+	// 	}
+	// 	const modifiedDock = await dockAPI.modifyDock(dock);
+	// 	console.log(modifiedDock);
+	// };
+
+	// const emptyDocks = async () => {
+	// 	const dockList = await dockAPI.getDocks();
+	// 	for (let index = 0; index < dockList.length; index++) {
+	// 		await emptyDock(dockList[index]);
+	// 	}
+	// };
+
+	// const emptyClient = async (client) => {
+	// 	if (client.Code === 6689) {
+	// 		client.BicycleCount = 50;
+	// 	} else {
+	// 		client.BicycleCount = 0;
+	// 	}
+	// 	const modifiedClient = await personAPI.modifyPerson(client);
+	// 	console.log(modifiedClient);
+	// };
+
+	// const emptyClients = async () => {
+	// 	const clientList = await personAPI.getPersons();
+	// 	for (let index = 0; index < clientList.length; index++) {
+	// 		await emptyClient(clientList[index]);
+	// 	}
+	// };
+	// ONLY USED IN DEVELOPMENT
 
 	const getBicycleStatuses = async (rentedBicycles, isPedaling) => {
 		const bicycleStatuses = await bicycleAPI.getBicycleStatuses();
 		setBicycleStatuses(bicycleStatuses);
-		// returnBicyclesToDock(1111);
-		//	modifyDockReturn({}, 1111);
 		console.log('bicycle statuses start : ', rentedBicycles.length, isPedaling);
 
 		if (rentedBicycles.length > 0 && isPedaling) {

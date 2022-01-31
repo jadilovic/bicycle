@@ -84,7 +84,7 @@ export default function ClientBicycles(props) {
 			}}
 		>
 			<Typography component="h6" variant="h6">
-				Select dock by clicking the row
+				List of bicycles rented by {clientCode}
 			</Typography>
 			<Container maxWidth="lg">
 				<div

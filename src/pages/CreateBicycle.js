@@ -64,7 +64,9 @@ const CreateProduct = () => {
 		);
 		setDocks(availableDocks);
 		setBicycleValues({
-			...bicycleValues,
+			Code: '',
+			Color: '',
+			Client: '',
 			Status: statuses[0].EnumName,
 			Dock: docks[0].Code,
 		});
@@ -111,13 +113,8 @@ const CreateProduct = () => {
 		const newBicycle = await bicycleAPI.createBicycle(bicycleData);
 		modifyDock(newBicycle.Dock);
 		console.log('response: ', newBicycle);
-		setBicycleValues({
-			Code: '',
-			Color: '',
-			Status: '',
-			Client: '',
-			Dock: '',
-		});
+		setLoading(true);
+		getDocksList(bicycleStatusList);
 	};
 
 	const handleChange = (event) => {
