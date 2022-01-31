@@ -6,7 +6,10 @@ import usePersonRequest from '../api/usePersonRequest';
 import useDockRequest from '../api/useDockRequest';
 import { DataGrid } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ClientInfo from '../components/ClientInfo';
+import DockInfo from '../components/DockInfo';
 import LoadingPage from '../components/LoadingPage';
+import ConfirmDialog from '../components/ConfirmDialog';
 import {
 	Container,
 	Box,
@@ -39,9 +42,15 @@ export default function Bicycle() {
 	const isMounted = useRef(false);
 	const [openDialog, setOpenDialog] = useState(false);
 	const [openSelectDockDialog, setOpenSelectDockDialog] = useState(false);
+	const [openClientInfoDialog, setOpenClientInfoDialog] = useState(false);
+	const [openDockInfoDialog, setOpenDockInfoDialog] = useState(false);
 	const [rentedBicycles, setRentedBicycles] = useState([]);
 	const [isPedaling, setIsPedaling] = useState(false);
 	const [bicyclesReturnDock, setBicyclesReturnDock] = useState(0);
+	const [clientCode, setClientCode] = useState(0);
+	const [dockCode, setDockCode] = useState(0);
+	const [confirmOpen, setConfirmOpen] = useState(false);
+	const [selectedBicycle, setSelectedBicycle] = useState({});
 
 	const handleDialogClose = () => {
 		setOpenDialog(false);
@@ -51,9 +60,13 @@ export default function Bicycle() {
 		setOpenSelectDockDialog(false);
 	};
 
-	function getClient(params) {
-		return `${params.row.Client ? params.row.Client : 'None'}`;
-	}
+	const handleClientInfoDialogClose = () => {
+		setOpenClientInfoDialog(false);
+	};
+
+	const handleDockInfoDialogClose = () => {
+		setOpenDockInfoDialog(false);
+	};
 
 	function getBicycleStatus(params) {
 		const bicycleStatus = bicycleStatuses.find(
@@ -79,8 +92,6 @@ export default function Bicycle() {
 			console.log('changed STATUS test ', bicyclesReturnDock);
 			modifyBicycle();
 			setLoading(true);
-		} else {
-			//		isMounted.current = true;
 		}
 	}, [status]);
 
@@ -254,7 +265,9 @@ export default function Bicycle() {
 		const bicycleStatuses = await bicycleAPI.getBicycleStatuses();
 		setBicycleStatuses(bicycleStatuses);
 		console.log('bicycle statuses start : ', rentedBicycles.length, isPedaling);
-
+		if (user.Role === 'APPADMIN') {
+			isPedaling = false;
+		}
 		if (rentedBicycles.length > 0 && isPedaling) {
 			console.log('start pedaling test');
 			startPedaling(rentedBicycles);
@@ -321,20 +334,19 @@ export default function Bicycle() {
 		displayBicycles();
 	};
 
+	const handleDeleteBicycle = (bicycleObject) => {
+		setSelectedBicycle(bicycleObject);
+		setConfirmOpen(true);
+	};
+
 	const handleClient = async (clientCode) => {
-		const clients = await personAPI.getPersons();
-		const clientObject = clients.find((client) => client.Code === clientCode);
-		alert(
-			`Client name: ${clientObject.Name}\nClient code: ${clientObject.Code}\nCity: ${clientObject.City}\nBicycle count: ${clientObject.BicycleCount}\n`
-		);
+		setClientCode(clientCode);
+		setOpenClientInfoDialog(true);
 	};
 
 	const handleDock = async (dockCode) => {
-		const docks = await dockAPI.getDocks();
-		const dockObject = docks.find((dock) => dock.Code === dockCode);
-		alert(
-			`Dock code: ${dockObject.Code}\nBicycle dock number: ${dockObject.BicycleDockNumber}\nCity: ${dockObject.City}\nBicycle count: ${dockObject.BicycleCount}\n`
-		);
+		setDockCode(dockCode);
+		setOpenDockInfoDialog(true);
 	};
 
 	const columns = [
@@ -368,6 +380,7 @@ export default function Bicycle() {
 				? null
 				: (params) => (
 						<Select
+							variant="standard"
 							style={{ width: 165 }}
 							value={params.value}
 							onChange={handleBicycleStatusChange}
@@ -436,7 +449,7 @@ export default function Bicycle() {
 						aria-label="delete"
 						color="error"
 						style={{ marginLeft: 16 }}
-						onClick={() => deleteBicycle(params.row)}
+						onClick={() => handleDeleteBicycle(params.row)}
 					>
 						<DeleteIcon />
 					</IconButton>
@@ -554,6 +567,56 @@ export default function Bicycle() {
 						</Button>
 					</DialogActions>
 				</Dialog>
+			</div>
+			<div>
+				<Dialog
+					fullWidth={true}
+					maxWidth="lg"
+					open={openClientInfoDialog}
+					onClose={handleClientInfoDialogClose}
+				>
+					<DialogContent>
+						<ClientInfo clientCode={clientCode} />
+					</DialogContent>
+					<DialogActions>
+						<Button
+							variant="contained"
+							onClick={handleClientInfoDialogClose}
+							autoFocus
+						>
+							Back
+						</Button>
+					</DialogActions>
+				</Dialog>
+			</div>
+			<div>
+				<Dialog
+					fullWidth={true}
+					maxWidth="lg"
+					open={openDockInfoDialog}
+					onClose={handleDockInfoDialogClose}
+				>
+					<DialogContent>
+						<DockInfo dockCode={dockCode} />
+					</DialogContent>
+					<DialogActions>
+						<Button
+							variant="contained"
+							onClick={handleDockInfoDialogClose}
+							autoFocus
+						>
+							Back
+						</Button>
+					</DialogActions>
+				</Dialog>
+			</div>
+			<div>
+				<ConfirmDialog
+					deleteBicycle={deleteBicycle}
+					selectedBicycle={selectedBicycle}
+					setConfirmOpen={setConfirmOpen}
+					confirmOpen={confirmOpen}
+				/>
 			</div>
 		</Box>
 	);

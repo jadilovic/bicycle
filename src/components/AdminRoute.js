@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { getUserData, isAuthenticated } from '../auth/Authentication';
 
-const TeacherRoute = ({ children }) => {
+const AdminRoute = ({ children }) => {
 	let role = '';
 	if (isAuthenticated()) {
 		role = getUserData().Role;
@@ -15,4 +15,4 @@ const TeacherRoute = ({ children }) => {
 	);
 };
 
-export default TeacherRoute;
+export default AdminRoute;
