@@ -321,9 +321,43 @@ export default function Bicycle() {
 		displayBicycles();
 	};
 
+	const handleClient = async (clientCode) => {
+		const clients = await personAPI.getPersons();
+		const clientObject = clients.find((client) => client.Code === clientCode);
+		alert(
+			`Client name: ${clientObject.Name}\nClient code: ${clientObject.Code}\nCity: ${clientObject.City}\nBicycle count: ${clientObject.BicycleCount}\n`
+		);
+	};
+
+	const handleDock = async (dockCode) => {
+		const docks = await dockAPI.getDocks();
+		const dockObject = docks.find((dock) => dock.Code === dockCode);
+		alert(
+			`Dock code: ${dockObject.Code}\nBicycle dock number: ${dockObject.BicycleDockNumber}\nCity: ${dockObject.City}\nBicycle count: ${dockObject.BicycleCount}\n`
+		);
+	};
+
 	const columns = [
 		{ field: 'id', headerName: 'ID', flex: 1, hide: true },
-		{ field: 'Code', headerName: 'Code', flex: 1 },
+		{
+			field: 'Code',
+			headerName: 'Code',
+			flex: 1,
+			renderCell: (params) => (
+				<strong>
+					<Button
+						disabled={params.row.Dock ? false : true}
+						variant="contained"
+						color="primary"
+						size="small"
+						style={{ marginLeft: 16 }}
+						onClick={() => handleRent(params.row)}
+					>
+						{'Rent ' + params.value}
+					</Button>
+				</strong>
+			),
+		},
 		{ field: 'Color', headerName: 'Color', flex: 1 },
 		{
 			field: 'Status',
@@ -351,7 +385,21 @@ export default function Bicycle() {
 			flex: 1,
 			align: 'center',
 			hide: isClient(),
-			valueGetter: getClient,
+			//	valueGetter: getClient,
+			renderCell: (params) => (
+				<strong>
+					<Button
+						disabled={params.value ? false : true}
+						variant="contained"
+						color="primary"
+						size="small"
+						style={{ marginLeft: 16 }}
+						onClick={() => handleClient(params.row.Client)}
+					>
+						{params.value ? params.value : 'None'}
+					</Button>
+				</strong>
+			),
 		},
 		{
 			field: 'Dock',
@@ -366,9 +414,9 @@ export default function Bicycle() {
 						color="primary"
 						size="small"
 						style={{ marginLeft: 16 }}
-						onClick={() => handleRent(params.row)}
+						onClick={() => handleDock(params.row.Dock)}
 					>
-						{params.value ? 'Rent from ' + params.value : 'Rented bicycle'}
+						{params.value ? params.value : 'Rented'}
 					</Button>
 				</strong>
 			),

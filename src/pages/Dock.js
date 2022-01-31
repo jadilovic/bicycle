@@ -4,40 +4,10 @@ import useDockRequest from '../api/useDockRequest';
 import { DataGrid } from '@mui/x-data-grid';
 import LoadingPage from '../components/LoadingPage';
 import { Container, Box, Button, Typography } from '@mui/material';
-
-const columns = [
-	{ field: 'id', headerName: 'ID', flex: 1, hide: true },
-	{ field: 'Code', headerName: 'Code', width: 70 },
-	{ field: 'State', headerName: 'State', flex: 1 },
-	{ field: 'City', headerName: 'City', flex: 1 },
-	{ field: 'Address', headerName: 'Address', flex: 1 },
-	{
-		field: 'BicycleDockNumber',
-		headerName: 'Bicycle dock number',
-		flex: 1,
-		align: 'center',
-	},
-	{
-		field: 'BicycleCount',
-		headerName: 'Bicycle count',
-		flex: 1,
-		align: 'center',
-		renderCell: (params) => (
-			<strong>
-				{params.value >= 0 && (
-					<Button
-						variant="contained"
-						color="primary"
-						size="small"
-						style={{ marginLeft: 16 }}
-					>
-						{params.value}
-					</Button>
-				)}
-			</strong>
-		),
-	},
-];
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DockBicycles from '../components/DockBicycles';
 
 export default function Dock() {
 	const screen = UserWindow();
@@ -45,6 +15,53 @@ export default function Dock() {
 	const [loading, setLoading] = useState(true);
 	const [rows, setRows] = useState([]);
 	const dockAPI = useDockRequest();
+	const [dockCode, setDockCode] = useState(0);
+
+	const [openDockBicyclesDialog, setOpenDockBicyclesDialog] = useState(false);
+
+	const handleDockBicyclesDialogClose = () => {
+		setOpenDockBicyclesDialog(false);
+	};
+
+	const showDockBicycles = (dockCode) => {
+		setDockCode(dockCode);
+		setOpenDockBicyclesDialog(true);
+	};
+
+	const columns = [
+		{ field: 'id', headerName: 'ID', flex: 1, hide: true },
+		{ field: 'Code', headerName: 'Code', width: 70 },
+		{ field: 'State', headerName: 'State', flex: 1 },
+		{ field: 'City', headerName: 'City', flex: 1 },
+		{ field: 'Address', headerName: 'Address', flex: 1 },
+		{
+			field: 'BicycleDockNumber',
+			headerName: 'Bicycle dock number',
+			flex: 1,
+			align: 'center',
+		},
+		{
+			field: 'BicycleCount',
+			headerName: 'Bicycle count',
+			flex: 1,
+			align: 'center',
+			renderCell: (params) => (
+				<strong>
+					{params.value >= 0 && (
+						<Button
+							variant="contained"
+							color="primary"
+							size="small"
+							style={{ marginLeft: 16 }}
+							onClick={() => showDockBicycles(params.row.Code)}
+						>
+							{params.value ? params.value : 0}
+						</Button>
+					)}
+				</strong>
+			),
+		},
+	];
 
 	const displayDocks = async () => {
 		const docks = await dockAPI.getDocks();
@@ -89,11 +106,32 @@ export default function Dock() {
 					<DataGrid
 						rows={rows}
 						columns={columns}
-						// pageSize={5}
-						// rowsPerPageOptions={[5]}
+						pageSize={7}
+						rowsPerPageOptions={[7]}
 					/>
 				</div>
 			</Container>
+			<div>
+				<Dialog
+					fullWidth={true}
+					maxWidth="lg"
+					open={openDockBicyclesDialog}
+					onClose={handleDockBicyclesDialogClose}
+				>
+					<DialogContent>
+						<DockBicycles dockCode={dockCode} />
+					</DialogContent>
+					<DialogActions>
+						<Button
+							variant="contained"
+							onClick={handleDockBicyclesDialogClose}
+							autoFocus
+						>
+							Back
+						</Button>
+					</DialogActions>
+				</Dialog>
+			</div>
 		</Box>
 	);
 }

@@ -15,37 +15,37 @@ const columns = [
 		width: 165,
 		//	valueGetter: isClient() ? getBicycleStatus : null,
 	},
-	{
-		field: 'Client',
-		headerName: 'Client',
-		flex: 1,
-		align: 'center',
-	},
 	// {
-	// 	field: 'Dock',
-	// 	headerName: 'Dock',
+	// 	field: 'Client',
+	// 	headerName: 'Client',
 	// 	flex: 1,
 	// 	align: 'center',
-	// 	renderCell: (params) => (
-	// 		<strong>
-	// 			<Button
-	// 				disabled={params.value ? false : true}
-	// 				variant="contained"
-	// 				color="primary"
-	// 				size="small"
-	// 				style={{ marginLeft: 16 }}
-	// 				//	onClick={() => handleRent(params.row)}
-	// 			>
-	// 				{params.value ? 'Rent from ' + params.value : 'Rented bicycle'}
-	// 			</Button>
-	// 		</strong>
-	// 	),
 	// },
+	{
+		field: 'Dock',
+		headerName: 'Dock',
+		flex: 1,
+		align: 'center',
+		// renderCell: (params) => (
+		// 	<strong>
+		// 		<Button
+		// 			disabled={params.value ? false : true}
+		// 			variant="contained"
+		// 			color="primary"
+		// 			size="small"
+		// 			style={{ marginLeft: 16 }}
+		// 			//	onClick={() => handleRent(params.row)}
+		// 		>
+		// 			{params.value ? 'Rent from ' + params.value : 'Rented bicycle'}
+		// 		</Button>
+		// 	</strong>
+		// ),
+	},
 ];
 
 export default function ClientBicycles(props) {
-	const { clientCode } = props;
-	const screen = UserWindow();
+	const { dockCode } = props;
+	//const screen = UserWindow();
 	const userScreenHeight = window.innerHeight;
 	const [loading, setLoading] = useState(true);
 	const [rows, setRows] = useState([]);
@@ -54,7 +54,7 @@ export default function ClientBicycles(props) {
 	const displayBicycles = async () => {
 		const bicycles = await bicycleAPI.getBicycles();
 		const filteredBicycles = bicycles.filter(
-			(bicycle) => bicycle.Client === clientCode
+			(bicycle) => bicycle.Dock === dockCode
 		);
 		filteredBicycles.forEach(function (element, index) {
 			element.id = index + 1;
@@ -84,7 +84,7 @@ export default function ClientBicycles(props) {
 			}}
 		>
 			<Typography component="h6" variant="h6">
-				List of bicycles rented by client {clientCode}
+				List of bicycles in dock {dockCode}
 			</Typography>
 			<Container maxWidth="lg">
 				<div
