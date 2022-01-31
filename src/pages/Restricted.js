@@ -13,6 +13,7 @@ export default function Restricted() {
 		<Container>
 			<Box
 				sx={{
+					paddingTop: 9,
 					paddingLeft: screen.dynamicWidth < 600 ? 0 : 22,
 					maxWidth: 700,
 					margin: 'auto',
@@ -23,8 +24,8 @@ export default function Restricted() {
 					Sorry, this is restricted page!
 				</Typography>
 				<Typography sx={{ color: 'text.secondary' }}>
-					Return to your previous page or go to Home page by clicking the button
-					below.
+					Return to your previous page or go to bicycles page by clicking the
+					button below.
 				</Typography>
 
 				<Box
@@ -39,12 +40,12 @@ export default function Restricted() {
 				/>
 
 				<Button
-					to="/materials"
+					to="/bicycle"
 					size="large"
 					variant="contained"
 					component={RouterLink}
 				>
-					Go start page
+					Go to bicycles
 				</Button>
 			</Box>
 		</Container>
