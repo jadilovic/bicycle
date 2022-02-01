@@ -87,7 +87,7 @@ const useValidationHook = () => {
 
 	const emailError = (enteredEmail) => {
 		if (
-			/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(enteredEmail) &&
+			/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(enteredEmail) &&
 			enteredEmail.length >= 10 &&
 			enteredEmail.length <= 200
 		) {

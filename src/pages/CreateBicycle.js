@@ -107,9 +107,13 @@ const CreateProduct = () => {
 	};
 
 	const submitData = async (bicycleData) => {
-		const newBicycle = await bicycleAPI.createBicycle(bicycleData);
-		modifyDock(newBicycle.Dock);
 		setLoading(true);
+		try {
+			const newBicycle = await bicycleAPI.createBicycle(bicycleData);
+			modifyDock(newBicycle.Dock);
+		} catch (error) {
+			setError(error.response.data.msg);
+		}
 		getDocksList(bicycleStatusList);
 	};
 
