@@ -77,7 +77,6 @@ export default function SelectDock(props) {
 						rows={rows}
 						columns={columns}
 						onRowClick={(props) => {
-							console.log(props.row);
 							setBicyclesReturnDock(props.row.Code);
 							setOpenSelectDockDialog(false);
 						}}

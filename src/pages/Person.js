@@ -88,8 +88,6 @@ export default function Person() {
 		},
 	];
 
-	console.log(rows);
-
 	if (loading) {
 		return <LoadingPage />;
 	}

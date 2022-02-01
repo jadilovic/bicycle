@@ -25,7 +25,7 @@ export default function ClientInfo(props) {
 
 	useEffect(() => {
 		displayPersons();
-	}, []);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	function getFullName(params) {
 		return `${params.row.Name || ''} ${params.row.Surname || ''}`;
@@ -57,8 +57,6 @@ export default function ClientInfo(props) {
 			align: 'center',
 		},
 	];
-
-	console.log(rows);
 
 	if (loading) {
 		return <LoadingPage />;

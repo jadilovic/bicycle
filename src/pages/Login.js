@@ -54,7 +54,6 @@ export default function SignIn(props) {
 		event.preventDefault();
 		const validUser = await checkUserCredentials();
 		if (validUser) {
-			console.log(validUser);
 			login(validUser);
 			setAuthenticated(true);
 			navigate('/bicycle', { replace: true });

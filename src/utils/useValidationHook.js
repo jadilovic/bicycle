@@ -1,8 +1,5 @@
-import React from 'react';
-
 const useValidationHook = () => {
 	const codeError = (enteredCode) => {
-		console.log(enteredCode);
 		if (enteredCode >= 1000 && enteredCode <= 9999) {
 			return false;
 		} else {

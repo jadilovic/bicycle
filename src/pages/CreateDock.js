@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import useDockRequest from '../api/useDockRequest';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import useValidationHook from '../utils/useValidationHook';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -12,10 +12,6 @@ import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import UserWindow from '../utils/UserWindow';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
 
 function Copyright() {
 	return (
@@ -58,7 +54,6 @@ const CreateDock = () => {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		console.log(dockValues);
 		if (validationHook.codeError(dockValues.Code)) {
 			setCodeError(validationHook.codeError(dockValues.Code));
 		} else {
@@ -125,14 +120,11 @@ const CreateDock = () => {
 	};
 
 	const submitData = async (dockData) => {
-		console.log('request : ', dockData);
-		let newDock;
 		try {
-			newDock = await dockAPI.createDock(dockData);
+			await dockAPI.createDock(dockData);
 		} catch (error) {
 			setError(error.response.data.msg);
 		}
-		console.log('response : ', newDock);
 		setDockValues({
 			Code: 0,
 			State: '',
@@ -150,8 +142,6 @@ const CreateDock = () => {
 			[event.target.name]: event.target.value,
 		});
 	};
-
-	console.log(dockValues);
 
 	return (
 		<Container component="main" maxWidth="md">

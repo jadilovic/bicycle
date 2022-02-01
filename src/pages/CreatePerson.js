@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import usePersonRequest from '../api/usePersonRequest';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import useValidationHook from '../utils/useValidationHook';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -61,7 +61,6 @@ const CreateProduct = () => {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		console.log(personValues);
 		if (validationHook.codeError(personValues.Code)) {
 			setCodeError(validationHook.codeError(personValues.Code));
 		} else {
@@ -136,14 +135,11 @@ const CreateProduct = () => {
 	};
 
 	const submitData = async (personData) => {
-		console.log('request : ', personData);
-		let newPerson;
 		try {
-			newPerson = await personAPI.createPerson(personData);
+			await personAPI.createPerson(personData);
 		} catch (error) {
 			setError(error.response.data.msg);
 		}
-		console.log('response: ', newPerson);
 		setPersonValues({
 			Code: 0,
 			Role: 'CLIENT',
@@ -165,8 +161,6 @@ const CreateProduct = () => {
 			[event.target.name]: event.target.value,
 		});
 	};
-
-	console.log(personValues);
 
 	return (
 		<Container component="main" maxWidth="md">

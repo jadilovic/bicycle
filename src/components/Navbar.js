@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getUserData, isAuthenticated } from '../auth/Authentication';
 import UserMenu from './UserMenu';
 import { AppBar } from '@mui/material';

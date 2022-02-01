@@ -39,7 +39,7 @@ export default function ClientBicycles(props) {
 
 	useEffect(() => {
 		getBicycleStatuses();
-	}, []);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const columns = [
 		{ field: 'id', headerName: 'ID', flex: 1, hide: true },

@@ -43,7 +43,7 @@ export default function DockInfo(props) {
 
 	useEffect(() => {
 		displayDocks();
-	}, []);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	if (loading) {
 		return <LoadingPage />;
