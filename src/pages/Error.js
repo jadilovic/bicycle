@@ -45,7 +45,7 @@ export default function Error() {
 							variant="contained"
 							component={RouterLink}
 						>
-							Go to bicycles or login
+							Go to bicycles
 						</Button>
 					</div>
 				</Grid>

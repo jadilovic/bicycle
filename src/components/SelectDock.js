@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import UserWindow from '../utils/UserWindow';
 import useDockRequest from '../api/useDockRequest';
 import { DataGrid } from '@mui/x-data-grid';
 import LoadingPage from './LoadingPage';
-import { Container, Box, Button, Typography } from '@mui/material';
+import { Container, Box, Typography } from '@mui/material';
 
 const columns = [
 	{ field: 'id', headerName: 'ID', flex: 1, hide: true },
@@ -28,7 +27,6 @@ const columns = [
 export default function SelectDock(props) {
 	const { setBicyclesReturnDock, numberOfBicycles, setOpenSelectDockDialog } =
 		props;
-	const screen = UserWindow();
 	const userScreenHeight = window.innerHeight;
 	const [loading, setLoading] = useState(true);
 	const [rows, setRows] = useState([]);
@@ -48,7 +46,7 @@ export default function SelectDock(props) {
 
 	useEffect(() => {
 		displayDocks();
-	}, []);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	if (loading) {
 		return <LoadingPage />;
@@ -59,8 +57,6 @@ export default function SelectDock(props) {
 			component="main"
 			sx={{
 				flexGrow: 1,
-				// marginTop: 8,
-				// paddingLeft: screen.dynamicWidth < 600 ? 0 : 25,
 				display: 'flex',
 				flexDirection: 'column',
 				alignItems: 'center',

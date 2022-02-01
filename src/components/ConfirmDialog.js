@@ -21,19 +21,19 @@ export default function ConfirmDialog(props) {
 	return (
 		<div>
 			<Dialog open={confirmOpen} onClose={handleClose}>
-				<DialogTitle color="error">{'Delete Bicycle?'}</DialogTitle>
+				<DialogTitle>{'Delete Bicycle?'}</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
 						{`Do you wish to delete selected bicycle with code ${selectedBicycle.Code} and color ${selectedBicycle.Color}?`}
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>
-					<Button variant="contained" color="error" onClick={handleYes}>
+					<Button variant="contained" color="success" onClick={handleYes}>
 						Yes
 					</Button>
 					<Button
 						variant="contained"
-						color="warning"
+						color="error"
 						onClick={handleClose}
 						autoFocus
 					>

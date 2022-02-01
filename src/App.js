@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Bicycle from './pages/Bicycle';
 import Dock from './pages/Dock';
 import Login from './pages/Login';
@@ -115,7 +115,14 @@ function App() {
 						</ClientRoute>
 					}
 				/>
-				<Route path="/*" element={<ErrorPage />} />
+				<Route
+					path="/*"
+					element={
+						<ClientRoute>
+							<ErrorPage />
+						</ClientRoute>
+					}
+				/>
 			</Routes>
 		</ThemeProvider>
 	);

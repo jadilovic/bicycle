@@ -33,7 +33,6 @@ const Navbar = (props) => {
 	const { setDarkMode, darkMode, authenticated, setAuthenticated } = props;
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [menuClicked, setMenuClicked] = useState(false);
-	const [linkChange, setLinkChange] = useState('');
 
 	let drawerMenu = [
 		{

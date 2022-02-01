@@ -7,7 +7,6 @@ const AdminRoute = ({ children }) => {
 	if (isAuthenticated()) {
 		role = getUserData().Role;
 	}
-	console.log('admin : ', role);
 	return isAuthenticated() && role === 'APPADMIN' ? (
 		children
 	) : (

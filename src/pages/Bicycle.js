@@ -41,6 +41,7 @@ export default function Bicycle() {
 	const user = getUserData();
 	const isMounted = useRef(false);
 	const [openDialog, setOpenDialog] = useState(false);
+	const [openAdminDialog, setOpenAdminDialog] = useState(false);
 	const [openSelectDockDialog, setOpenSelectDockDialog] = useState(false);
 	const [openClientInfoDialog, setOpenClientInfoDialog] = useState(false);
 	const [openDockInfoDialog, setOpenDockInfoDialog] = useState(false);
@@ -54,6 +55,10 @@ export default function Bicycle() {
 
 	const handleDialogClose = () => {
 		setOpenDialog(false);
+	};
+
+	const handleAdminDialogClose = () => {
+		setOpenAdminDialog(false);
 	};
 
 	const handleSelectDockDialogClose = () => {
@@ -172,7 +177,7 @@ export default function Bicycle() {
 		if (user.BicycleCount === 50) {
 			setOpenDialog(true);
 		} else if (user.Role === 'APPADMIN') {
-			alert('Admin is not allowed to rent bicycles');
+			setOpenAdminDialog(true);
 		} else {
 			modifyDockRent(bicycle);
 		}
@@ -229,7 +234,7 @@ export default function Bicycle() {
 
 	const startPedaling = (rentedBicycles) => {
 		if (user.Role === 'APPADMIN') {
-			alert('Admin is not allowed to rent or start pedaling!');
+			setOpenAdminDialog(true);
 			displayBicycles();
 		} else {
 			setLoading(true);
@@ -245,7 +250,7 @@ export default function Bicycle() {
 
 	const stopPedaling = () => {
 		if (user.Role === 'APPADMIN') {
-			alert('Admin is not allowed to use Client options!');
+			setOpenAdminDialog(true);
 		} else {
 			setOpenSelectDockDialog(true);
 		}
@@ -464,7 +469,27 @@ export default function Bicycle() {
 						</DialogContentText>
 					</DialogContent>
 					<DialogActions>
-						<Button onClick={handleDialogClose} autoFocus>
+						<Button variant="contained" onClick={handleDialogClose} autoFocus>
+							OK
+						</Button>
+					</DialogActions>
+				</Dialog>
+			</div>
+			<div>
+				<Dialog open={openAdminDialog} onClose={handleAdminDialogClose}>
+					<DialogTitle>{'Action not allowed!'}</DialogTitle>
+					<DialogContent>
+						<DialogContentText>
+							Administrator is not allowed to rent bicycles, start pedaling or
+							stop pedaling.
+						</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+						<Button
+							variant="contained"
+							onClick={handleAdminDialogClose}
+							autoFocus
+						>
 							OK
 						</Button>
 					</DialogActions>

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import usePersonRequest from '../api/usePersonRequest';
-import useDockRequest from '../api/useDockRequest';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import useValidationHook from '../utils/useValidationHook';
 import Avatar from '@mui/material/Avatar';
@@ -13,10 +12,6 @@ import CategoryIcon from '@mui/icons-material/Category';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import UserWindow from '../utils/UserWindow';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
 
 function Copyright() {
 	return (
