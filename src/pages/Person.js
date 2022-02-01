@@ -121,8 +121,8 @@ export default function Person() {
 						components={{
 							Toolbar: GridToolbar,
 						}}
-						// pageSize={5}
-						// rowsPerPageOptions={[5]}
+						pageSize={7}
+						rowsPerPageOptions={[7]}
 					/>
 				</div>
 			</Container>
