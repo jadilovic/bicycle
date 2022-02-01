@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import usePersonRequest from '../api/usePersonRequest';
 import { login } from '../auth/Authentication';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Avatar, Alert } from '@mui/material';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -33,14 +33,14 @@ function Copyright(props) {
 export default function SignIn(props) {
 	const { setAuthenticated } = props;
 	const personAPI = usePersonRequest();
-	const [next, setNext] = useState(false);
 	const [user, setUser] = useState({ email: '', code: '' });
 	const [error, setError] = useState(false);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		localStorage.removeItem('user');
 		setAuthenticated(false);
-	}, []);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const checkUserCredentials = async () => {
 		const personList = await personAPI.getPersons();
@@ -52,13 +52,12 @@ export default function SignIn(props) {
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
-		const user = await checkUserCredentials();
-		console.log(user);
-		if (user) {
-			console.log(user);
-			login(user);
+		const validUser = await checkUserCredentials();
+		if (validUser) {
+			console.log(validUser);
+			login(validUser);
 			setAuthenticated(true);
-			setNext(true);
+			navigate('/bicycle', { replace: true });
 		} else {
 			setError(true);
 		}
@@ -68,10 +67,6 @@ export default function SignIn(props) {
 		event.preventDefault();
 		setUser({ ...user, [event.target.name]: event.target.value });
 	};
-
-	if (next) {
-		return <Navigate to="/bicycle" />;
-	}
 
 	return (
 		<Container component="main" maxWidth="xs">

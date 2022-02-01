@@ -1,4 +1,3 @@
-import React from 'react';
 const axios = require('axios').default;
 
 const usePersonRequest = () => {
@@ -39,7 +38,6 @@ const usePersonRequest = () => {
 			},
 		})
 			.then((res) => {
-				console.log(res.data);
 				return res.data.Response;
 			})
 			.catch((err) => {
@@ -63,7 +61,6 @@ const usePersonRequest = () => {
 			},
 		})
 			.then((res) => {
-				console.log(res.data);
 				return res.data.Response;
 			})
 			.catch((err) => {

@@ -1,4 +1,3 @@
-import React from 'react';
 const axios = require('axios').default;
 
 const useDockRequest = () => {
@@ -18,7 +17,6 @@ const useDockRequest = () => {
 					authorization: `Bearer ${REAL_TOKEN}`,
 				},
 			}).then((res) => {
-				console.log(res.data);
 				return res.data.Response;
 			});
 		} catch (err) {
@@ -40,7 +38,6 @@ const useDockRequest = () => {
 			},
 		})
 			.then((res) => {
-				console.log(res.data);
 				return res.data.Response;
 			})
 			.catch((err) => {
@@ -64,7 +61,6 @@ const useDockRequest = () => {
 			},
 		})
 			.then((res) => {
-				console.log(res.data);
 				return res.data.Response;
 			})
 			.catch((err) => {

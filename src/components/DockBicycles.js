@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import UserWindow from '../utils/UserWindow';
 import useBicycleRequest from '../api/useBicycleRequest';
 import { DataGrid } from '@mui/x-data-grid';
 import LoadingPage from './LoadingPage';
-import { Container, Box, Button, Typography } from '@mui/material';
+import { Container, Box, Typography } from '@mui/material';
 
 const columns = [
 	{ field: 'id', headerName: 'ID', flex: 1, hide: true },
@@ -13,39 +12,17 @@ const columns = [
 		field: 'Status',
 		headerName: 'Status',
 		width: 165,
-		//	valueGetter: isClient() ? getBicycleStatus : null,
 	},
-	// {
-	// 	field: 'Client',
-	// 	headerName: 'Client',
-	// 	flex: 1,
-	// 	align: 'center',
-	// },
 	{
 		field: 'Dock',
 		headerName: 'Dock',
 		flex: 1,
 		align: 'center',
-		// renderCell: (params) => (
-		// 	<strong>
-		// 		<Button
-		// 			disabled={params.value ? false : true}
-		// 			variant="contained"
-		// 			color="primary"
-		// 			size="small"
-		// 			style={{ marginLeft: 16 }}
-		// 			//	onClick={() => handleRent(params.row)}
-		// 		>
-		// 			{params.value ? 'Rent from ' + params.value : 'Rented bicycle'}
-		// 		</Button>
-		// 	</strong>
-		// ),
 	},
 ];
 
 export default function ClientBicycles(props) {
 	const { dockCode } = props;
-	//const screen = UserWindow();
 	const userScreenHeight = window.innerHeight;
 	const [loading, setLoading] = useState(true);
 	const [rows, setRows] = useState([]);
@@ -65,7 +42,7 @@ export default function ClientBicycles(props) {
 
 	useEffect(() => {
 		displayBicycles();
-	}, []);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	if (loading) {
 		return <LoadingPage />;
@@ -76,8 +53,6 @@ export default function ClientBicycles(props) {
 			component="main"
 			sx={{
 				flexGrow: 1,
-				// marginTop: 8,
-				// paddingLeft: screen.dynamicWidth < 600 ? 0 : 25,
 				display: 'flex',
 				flexDirection: 'column',
 				alignItems: 'center',
@@ -97,11 +72,6 @@ export default function ClientBicycles(props) {
 					<DataGrid
 						rows={rows}
 						columns={columns}
-						// onRowClick={(props) => {
-						// 	console.log(props.row);
-						// 	setBicyclesReturnDock(props.row.Code);
-						// 	setOpenSelectDockDialog(false);
-						// }}
 						pageSize={7}
 						rowsPerPageOptions={[7]}
 					/>

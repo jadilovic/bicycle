@@ -3,7 +3,7 @@ import { Grid, Stack, Typography } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import UserWindow from '../utils/UserWindow';
 
-export default function App() {
+export default function LoadingPage() {
 	const screen = UserWindow();
 	return (
 		<Grid

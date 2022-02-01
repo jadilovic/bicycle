@@ -1,4 +1,3 @@
-import React from 'react';
 const axios = require('axios').default;
 
 const useBicycleRequest = () => {
@@ -56,7 +55,6 @@ const useBicycleRequest = () => {
 	};
 
 	const createBicycle = async (newBicycle) => {
-		console.log(newBicycle);
 		try {
 			return axios({
 				method: 'POST',
@@ -69,7 +67,6 @@ const useBicycleRequest = () => {
 					authorization: `Bearer ${REAL_TOKEN}`,
 				},
 			}).then((res) => {
-				console.log(res.data);
 				return res.data.Response;
 			});
 		} catch (err) {
@@ -79,7 +76,6 @@ const useBicycleRequest = () => {
 	};
 
 	const modifyBicycle = async (modifiedBicycle) => {
-		console.log(modifiedBicycle);
 		try {
 			return axios({
 				method: 'POST',
@@ -92,7 +88,6 @@ const useBicycleRequest = () => {
 					authorization: `Bearer ${REAL_TOKEN}`,
 				},
 			}).then((res) => {
-				console.log(res.data);
 				return res.data.Response;
 			});
 		} catch (err) {
@@ -102,7 +97,6 @@ const useBicycleRequest = () => {
 	};
 
 	const deleteBicycle = async (bicycleCode) => {
-		console.log(bicycleCode);
 		try {
 			return axios({
 				method: 'POST',
@@ -117,7 +111,6 @@ const useBicycleRequest = () => {
 					authorization: `Bearer ${REAL_TOKEN}`,
 				},
 			}).then((res) => {
-				console.log(res.data);
 				return res.data.Response;
 			});
 		} catch (err) {
