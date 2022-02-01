@@ -1,4 +1,3 @@
-// src/pages/Error.js
 import React from 'react';
 import { Button, CardMedia, CssBaseline } from '@mui/material';
 import Grid from '@mui/material/Grid';
@@ -46,7 +45,7 @@ export default function Error() {
 							variant="contained"
 							component={RouterLink}
 						>
-							Go to bicycles
+							Go to bicycles or login
 						</Button>
 					</div>
 				</Grid>

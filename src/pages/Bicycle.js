@@ -83,27 +83,25 @@ export default function Bicycle() {
 	const modifyBicycle = async () => {
 		delete bicycle.id;
 		bicycle.Status = status;
-		const modifiedBicycle = await bicycleAPI.modifyBicycle(bicycle);
+		await bicycleAPI.modifyBicycle(bicycle);
 		displayBicycles();
 	};
 
 	useEffect(() => {
 		if (isMounted.current) {
-			console.log('changed STATUS test ', bicyclesReturnDock);
 			modifyBicycle();
 			setLoading(true);
 		}
-	}, [status]);
+	}, [status]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect(() => {
 		if (isMounted.current) {
 			setLoading(true);
-			console.log('changed DOCK test ', bicyclesReturnDock);
 			returnBicyclesToDock(bicyclesReturnDock);
 		} else {
 			isMounted.current = true;
 		}
-	}, [bicyclesReturnDock]);
+	}, [bicyclesReturnDock]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const isClient = () => {
 		if (user.Role === 'CLIENT') {
@@ -114,43 +112,30 @@ export default function Bicycle() {
 	};
 
 	const modifyBicycleRent = async (bicycle) => {
-		// Remove dock code and add client code to rented bicycle
 		delete bicycle.id;
 		bicycle.Dock = null;
 		bicycle.Client = user.Code;
-		console.log(bicycle);
 		const modifiedBicycle = await bicycleAPI.modifyBicycle(bicycle);
-		console.log(modifiedBicycle);
-		// Add rented bicycle to a list of rented bicycles
 		rentedBicycles.push(modifiedBicycle);
 		setRentedBicycles([...rentedBicycles]);
 		modifyPersonRent();
 	};
 
 	const modifyPersonRent = async () => {
-		// Add new bicycle to client
 		user.BicycleCount = user.BicycleCount + 1;
-		console.log('before api request : ', user);
 		const modifiedPerson = await personAPI.modifyPerson(user);
-		console.log('before saving local storage user : ', modifiedPerson);
 		localStorage.setItem('user', JSON.stringify(modifiedPerson));
 		localStorage.setItem('rentedBicycles', JSON.stringify(rentedBicycles));
-		console.log(modifiedPerson);
 		displayBicycles();
 	};
 
 	const modifyDockRent = async (bicycle) => {
-		// Remove rented bicycle from a dock
 		setLoading(true);
-		console.log(bicycle);
 		const dockList = await dockAPI.getDocks();
-		console.log(dockList);
 		const selectedDock = dockList.find((dock) => dock.Code === bicycle.Dock);
-		console.log(selectedDock);
 		const dockBicyclesCount = selectedDock.BicycleCount;
 		selectedDock.BicycleCount = dockBicyclesCount - 1;
-		const modifiedDock = await dockAPI.modifyDock(selectedDock);
-		console.log(modifiedDock);
+		await dockAPI.modifyDock(selectedDock);
 		modifyBicycleRent(bicycle);
 	};
 
@@ -158,9 +143,7 @@ export default function Bicycle() {
 		delete bicycle.id;
 		bicycle.Dock = returnDock;
 		bicycle.Client = null;
-		console.log(bicycle);
-		const modifiedBicycle = await bicycleAPI.modifyBicycle(bicycle);
-		console.log(modifiedBicycle);
+		await bicycleAPI.modifyBicycle(bicycle);
 		if (arrLength === index + 1) {
 			displayBicycles();
 		}
@@ -169,26 +152,19 @@ export default function Bicycle() {
 
 	const modifyPersonReturn = async () => {
 		user.BicycleCount = user.BicycleCount - 1;
-		console.log(user);
 		const modifiedPerson = await personAPI.modifyPerson(user);
 		localStorage.setItem('user', JSON.stringify(modifiedPerson));
 		localStorage.removeItem('rentedBicycles');
 		localStorage.removeItem('isPedaling');
 		setRentedBicycles([]);
 		setIsPedaling(false);
-		console.log(modifiedPerson);
-		// displayBicycles();
 	};
 
 	const modifyDockReturn = async (bicycle, returnDock, arrLength, index) => {
-		console.log(bicycle);
 		const dockList = await dockAPI.getDocks();
-		console.log(dockList);
 		const selectedDock = dockList.find((dock) => dock.Code === returnDock);
-		console.log(selectedDock);
 		selectedDock.BicycleCount = selectedDock.BicycleCount + 1;
-		const modifiedDock = await dockAPI.modifyDock(selectedDock);
-		console.log(modifiedDock);
+		await dockAPI.modifyDock(selectedDock);
 		modifyBicycleReturn(bicycle, returnDock, arrLength, index);
 	};
 
@@ -204,7 +180,6 @@ export default function Bicycle() {
 
 	const displayBicycles = async () => {
 		const bicycles = await bicycleAPI.getBicycles();
-		console.log(bicycles);
 		bicycles.forEach(function (element, index) {
 			element.id = index + 1;
 		});
@@ -213,7 +188,6 @@ export default function Bicycle() {
 	};
 
 	const returnBicyclesToDock = async (dockCode) => {
-		console.log(rentedBicycles);
 		for (let index = 0; index < rentedBicycles.length; index++) {
 			await modifyDockReturn(
 				rentedBicycles[index],
@@ -224,57 +198,17 @@ export default function Bicycle() {
 		}
 	};
 
-	// ONLY USED IN DEVELOPMENT
-	// const emptyDock = async (dock) => {
-	// 	if (dock.Code === 4444) {
-	// 		dock.BicycleCount = 0;
-	// 		dock.BicycleDockNumber = 2;
-	// 	} else {
-	// 		dock.BicycleCount = 0;
-	// 	}
-	// 	const modifiedDock = await dockAPI.modifyDock(dock);
-	// 	console.log(modifiedDock);
-	// };
-
-	// const emptyDocks = async () => {
-	// 	const dockList = await dockAPI.getDocks();
-	// 	for (let index = 0; index < dockList.length; index++) {
-	// 		await emptyDock(dockList[index]);
-	// 	}
-	// };
-
-	// const emptyClient = async (client) => {
-	// 	if (client.Code === 6689) {
-	// 		client.BicycleCount = 50;
-	// 	} else {
-	// 		client.BicycleCount = 0;
-	// 	}
-	// 	const modifiedClient = await personAPI.modifyPerson(client);
-	// 	console.log(modifiedClient);
-	// };
-
-	// const emptyClients = async () => {
-	// 	const clientList = await personAPI.getPersons();
-	// 	for (let index = 0; index < clientList.length; index++) {
-	// 		await emptyClient(clientList[index]);
-	// 	}
-	// };
-	// ONLY USED IN DEVELOPMENT
-
 	const getBicycleStatuses = async (rentedBicycles, isPedaling) => {
-		const bicycleStatuses = await bicycleAPI.getBicycleStatuses();
-		setBicycleStatuses(bicycleStatuses);
-		console.log('bicycle statuses start : ', rentedBicycles.length, isPedaling);
+		const statuses = await bicycleAPI.getBicycleStatuses();
+		setBicycleStatuses(statuses);
 		if (user.Role === 'APPADMIN') {
 			isPedaling = false;
 		}
 		if (rentedBicycles.length > 0 && isPedaling) {
-			console.log('start pedaling test');
 			startPedaling(rentedBicycles);
 		} else {
 			displayBicycles();
 		}
-		console.log('bicycle statuses end : ', rentedBicycles.length, isPedaling);
 	};
 
 	useEffect(() => {
@@ -291,7 +225,7 @@ export default function Bicycle() {
 			setIsPedaling(localStorageIsPedaling);
 		}
 		getBicycleStatuses(localStorageRentedBicycles, localStorageIsPedaling);
-	}, []);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const startPedaling = (rentedBicycles) => {
 		if (user.Role === 'APPADMIN') {
@@ -299,7 +233,6 @@ export default function Bicycle() {
 			displayBicycles();
 		} else {
 			setLoading(true);
-			console.log('test : ', rentedBicycles);
 			rentedBicycles.forEach(function (element, index) {
 				element.id = index + 1;
 			});
@@ -320,17 +253,13 @@ export default function Bicycle() {
 
 	const deleteBicycle = async (bicycleObject) => {
 		setLoading(true);
-		console.log('delete bicycle : ', bicycleObject);
-		const deletedBicycle = await bicycleAPI.deleteBicycle(bicycleObject.Code);
-		console.log('deleted bicycle : ', deletedBicycle);
+		await bicycleAPI.deleteBicycle(bicycleObject.Code);
 		const docksList = await dockAPI.getDocks();
 		const dockObject = docksList.find(
 			(dock) => dock.Code === bicycleObject.Dock
 		);
-		console.log('to be modified dock : ', dockObject);
 		dockObject.BicycleCount = dockObject.BicycleCount - 1;
-		const modifiedDock = await dockAPI.modifyDock(dockObject);
-		console.log('modified dock after delet : ', modifiedDock);
+		await dockAPI.modifyDock(dockObject);
 		displayBicycles();
 	};
 
@@ -457,8 +386,6 @@ export default function Bicycle() {
 			),
 		},
 	];
-
-	console.log(rentedBicycles.length === 0 || isPedaling);
 
 	if (loading) {
 		return <LoadingPage />;

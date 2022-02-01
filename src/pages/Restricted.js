@@ -1,14 +1,10 @@
 import { Link as RouterLink } from 'react-router-dom';
-// material
-import { styled } from '@mui/material/styles';
 import { Box, Button, Typography, Container } from '@mui/material';
-// components
 import restricted from '../images/restricted.jpg';
 import UserWindow from '../utils/UserWindow';
 
 export default function Restricted() {
 	const screen = UserWindow();
-	console.log('restricted');
 	return (
 		<Container>
 			<Box

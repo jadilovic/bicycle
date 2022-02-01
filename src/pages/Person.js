@@ -26,6 +26,7 @@ export default function Person() {
 
 	const displayPersons = async () => {
 		const persons = await personAPI.getPersons();
+		persons.shift();
 		persons.forEach(function (element, index) {
 			element.id = index + 1;
 		});
@@ -35,7 +36,7 @@ export default function Person() {
 
 	useEffect(() => {
 		displayPersons();
-	}, []);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	function getFullName(params) {
 		return `${params.row.Name || ''} ${params.row.Surname || ''}`;

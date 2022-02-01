@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import useBicycleRequest from '../api/useBicycleRequest';
 import useDockRequest from '../api/useDockRequest';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import useValidationHook from '../utils/useValidationHook';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -82,7 +82,6 @@ const CreateProduct = () => {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		console.log(bicycleValues);
 		if (validationHook.codeError(bicycleValues.Code)) {
 			setCodeError(validationHook.codeError(bicycleValues.Code));
 		} else {
@@ -104,15 +103,12 @@ const CreateProduct = () => {
 	const modifyDock = async (dockCode) => {
 		const selectedDock = docks.find((dock) => dock.Code === dockCode);
 		selectedDock.BicycleCount = selectedDock.BicycleCount + 1;
-		const modifiedDock = await dockAPI.modifyDock(selectedDock);
-		console.log('modified dock : ', modifiedDock);
+		await dockAPI.modifyDock(selectedDock);
 	};
 
 	const submitData = async (bicycleData) => {
-		console.log('request : ', bicycleData);
 		const newBicycle = await bicycleAPI.createBicycle(bicycleData);
 		modifyDock(newBicycle.Dock);
-		console.log('response: ', newBicycle);
 		setLoading(true);
 		getDocksList(bicycleStatusList);
 	};

@@ -1,19 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import usePersonRequest from '../api/usePersonRequest';
 import { login } from '../auth/Authentication';
-import {
-	BrowserRouter as Router,
-	Route,
-	Link,
-	Routes,
-	Navigate,
-} from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Avatar, Alert } from '@mui/material';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
