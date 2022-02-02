@@ -37,6 +37,7 @@ export default function Bicycle() {
 	const dockAPI = useDockRequest();
 	const [bicycle, setBicycle] = useState({});
 	const [status, setStatus] = useState('');
+	const [changeBicycleStatus, setChangeBicycleStatus] = useState(false);
 	const [bicycleStatuses, setBicycleStatuses] = useState([]);
 	const user = getUserData();
 	const isMounted = useRef(false);
@@ -92,6 +93,7 @@ export default function Bicycle() {
 	const handleBicycleStatusChange = (event) => {
 		event.preventDefault();
 		setStatus(event.target.value);
+		setChangeBicycleStatus(!changeBicycleStatus);
 	};
 
 	const modifyBicycleStatus = async () => {
@@ -106,7 +108,7 @@ export default function Bicycle() {
 			modifyBicycleStatus();
 			setLoading(true);
 		}
-	}, [status]); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [changeBicycleStatus]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect(() => {
 		if (isMounted.current) {
