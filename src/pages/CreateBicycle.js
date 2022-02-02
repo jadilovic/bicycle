@@ -3,12 +3,13 @@ import useBicycleRequest from '../api/useBicycleRequest';
 import useDockRequest from '../api/useDockRequest';
 import { Link } from 'react-router-dom';
 import useValidationHook from '../utils/useValidationHook';
+import useUniqueValidationHook from '../utils/useUniqueValidationHook';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import { Box, Alert } from '@mui/material';
+import { Box } from '@mui/material';
 import PedalBikeIcon from '@mui/icons-material/PedalBike';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -18,6 +19,13 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import LoadingPage from '../components/LoadingPage';
+import Stack from '@mui/material/Stack';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+	return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 function Copyright() {
 	return (
@@ -36,6 +44,7 @@ const CreateProduct = () => {
 	const bicycleAPI = useBicycleRequest();
 	const dockAPI = useDockRequest();
 	const validationHook = useValidationHook();
+	const uniqueValidationHook = useUniqueValidationHook();
 	const [error, setError] = useState(null);
 	const [codeError, setCodeError] = useState({ error: false, msg: '' });
 	const [colorError, setColorError] = useState({ error: false, msg: '' });
@@ -50,6 +59,27 @@ const CreateProduct = () => {
 	const [docks, setDocks] = useState([]);
 	const [bicycleStatusList, setBicycleStatusList] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [openSnackbar, setOpenSnackbar] = useState(false);
+	const [snackbarMsg, setSnackbarMsg] = useState('');
+	const [snackbarSeverity, setSnackbarSeverity] = useState('');
+	const [bicycles, setBicycles] = useState([]);
+
+	useEffect(() => {
+		loadBicycles();
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+	const loadBicycles = async () => {
+		const loadedBicycles = await bicycleAPI.getBicycles();
+		setBicycles([...loadedBicycles]);
+		getBicycleStatusList();
+	};
+
+	const handleCloseSnackbar = (event, reason) => {
+		if (reason === 'clickaway') {
+			return;
+		}
+		setOpenSnackbar(false);
+	};
 
 	const getBicycleStatusList = async () => {
 		const statuses = await bicycleAPI.getBicycleStatuses();
@@ -76,26 +106,33 @@ const CreateProduct = () => {
 		setLoading(false);
 	}, [bicycleValues]);
 
-	useEffect(() => {
-		getBicycleStatusList();
-	}, []); // eslint-disable-line react-hooks/exhaustive-deps
-
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		if (validationHook.codeError(bicycleValues.Code)) {
-			setCodeError(validationHook.codeError(bicycleValues.Code));
+
+		let uniqueError = false;
+		const codeValidError = validationHook.codeError(bicycleValues.Code);
+		if (codeValidError) {
+			setCodeError(codeValidError);
 		} else {
-			setCodeError({ error: false, msg: '' });
+			uniqueError = uniqueValidationHook.bicycleCodeError(
+				bicycleValues.Code,
+				bicycles
+			);
+			if (uniqueError) {
+				setCodeError(uniqueError);
+			} else {
+				setCodeError({ error: false, msg: '' });
+			}
 		}
-		if (validationHook.colorError(bicycleValues.Color)) {
-			setColorError(validationHook.colorError(bicycleValues.Color));
+
+		const colorValidError = validationHook.colorError(bicycleValues.Color);
+		if (colorValidError) {
+			setColorError(colorValidError);
 		} else {
 			setColorError({ error: false, msg: '' });
 		}
-		if (
-			!validationHook.colorError(bicycleValues.Color) &&
-			!validationHook.codeError(bicycleValues.Code)
-		) {
+
+		if (!codeValidError && !uniqueError && !colorValidError) {
 			submitData(bicycleValues);
 		}
 	};
@@ -110,7 +147,20 @@ const CreateProduct = () => {
 		setLoading(true);
 		try {
 			const newBicycle = await bicycleAPI.createBicycle(bicycleData);
-			modifyDock(newBicycle.Dock);
+			if (newBicycle) {
+				setSnackbarMsg(
+					`New bicycle with code ${newBicycle.Code} and color ${newBicycle.Color} was created!`
+				);
+				setSnackbarSeverity('success');
+				setOpenSnackbar(true);
+				modifyDock(newBicycle.Dock);
+			} else {
+				setSnackbarMsg(
+					`Failed to create new bicycle with code ${bicycleData.Code} and name ${bicycleData.Color}!`
+				);
+				setSnackbarSeverity('error');
+				setOpenSnackbar(true);
+			}
 		} catch (error) {
 			setError(error.response.data.msg);
 		}
@@ -245,6 +295,21 @@ const CreateProduct = () => {
 					</Grid>
 				</Box>
 				<Copyright sx={{ mt: 5 }} />
+				<Stack spacing={2} sx={{ width: '100%' }}>
+					<Snackbar
+						open={openSnackbar}
+						autoHideDuration={5000}
+						onClose={handleCloseSnackbar}
+					>
+						<Alert
+							onClose={handleCloseSnackbar}
+							severity={snackbarSeverity}
+							sx={{ width: '100%' }}
+						>
+							{snackbarMsg}
+						</Alert>
+					</Snackbar>
+				</Stack>
 			</Box>
 		</Container>
 	);

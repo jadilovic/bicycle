@@ -111,27 +111,16 @@ const useValidationHook = () => {
 		}
 	};
 
-	const bicycleCountError = (enteredBicycleCount) => {
-		if (enteredBicycleCount >= 0 && enteredBicycleCount <= 50) {
-			return false;
-		} else {
-			return {
-				error: true,
-				msg: 'Bicycle count must be minimum 0 or maximum 50',
-			};
-		}
-	};
-
-	const dockCountError = (enteredBicycleDockNumber, enteredBicycleCount) => {
-		if (Number(enteredBicycleDockNumber) >= Number(enteredBicycleCount)) {
-			return false;
-		} else {
-			return {
-				error: true,
-				msg: 'Bicycle count can have maximum value of Bicycle Dock Number',
-			};
-		}
-	};
+	// const bicycleCountError = (enteredBicycleCount) => {
+	// 	if (enteredBicycleCount >= 0 && enteredBicycleCount <= 50) {
+	// 		return false;
+	// 	} else {
+	// 		return {
+	// 			error: true,
+	// 			msg: 'Bicycle count must be minimum 0 or maximum 50',
+	// 		};
+	// 	}
+	// };
 
 	const mobileNumberError = (enteredMobileNumber) => {
 		if (enteredMobileNumber.length >= 10 && enteredMobileNumber.length <= 30) {
@@ -154,9 +143,7 @@ const useValidationHook = () => {
 		addressError,
 		emailError,
 		mobileNumberError,
-		bicycleCountError,
 		bicycleDockNumberError,
-		dockCountError,
 	};
 };
 

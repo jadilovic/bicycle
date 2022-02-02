@@ -1,5 +1,18 @@
 # Getting Started with Create React App
 
+### IMPORTANT FOR NETLIFY DEPLOY
+
+https://dev.to/yuridevat/2-ways-to-overcome-deployment-problems-with-react-on-netlify-4l5p
+
+Solution 2: Make changes in your deployment setting on Netlify directly:
+In Netlify open "Site details" - Build & deploy - Environment - Environment variables - edit variables and set Key to CI and value to false.
+
+Add a \_redirects file inside the /public folder like /public/\_redirects. I then pasted /\* /index.html 200  
+into the \_redirects file.
+I did all that in my VS Code, after which I pushed to github and then ofcourse my netlify re-deploys automatically everytime I push to github. My problem was solved and refresh nolonger brings the 404 error.
+
+### IMPORTANT FOR NETLIFY DEPLOY
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
@@ -19,11 +32,18 @@ You may also see any lint errors in the console.
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-######## IMPORTANT FOR NETLIFY DEPLOY
+### IMPORTANT FOR NETLIFY DEPLOY
+
 https://dev.to/yuridevat/2-ways-to-overcome-deployment-problems-with-react-on-netlify-4l5p
 
 Solution 2: Make changes in your deployment setting on Netlify directly:
 In Netlify open "Site details" - Build & deploy - Environment - Environment variables - edit variables and set Key to CI and value to false.
+
+Add a \_redirects file inside the /public folder like /public/\_redirects. I then pasted /\* /index.html 200  
+into the \_redirects file.
+I did all that in my VS Code, after which I pushed to github and then ofcourse my netlify re-deploys automatically everytime I push to github. My problem was solved and refresh nolonger brings the 404 error.
+
+### IMPORTANT FOR NETLIFY DEPLOY
 
 ### `npm run build`
 

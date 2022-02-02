@@ -4,29 +4,26 @@ import { DataGrid } from '@mui/x-data-grid';
 import LoadingPage from './LoadingPage';
 import { Container, Box, Typography } from '@mui/material';
 
-const columns = [
-	{ field: 'id', headerName: 'ID', flex: 1, hide: true },
-	{ field: 'Code', headerName: 'Code', flex: 1 },
-	{ field: 'Color', headerName: 'Color', flex: 1 },
-	{
-		field: 'Status',
-		headerName: 'Status',
-		width: 165,
-	},
-	{
-		field: 'Dock',
-		headerName: 'Dock',
-		flex: 1,
-		align: 'center',
-	},
-];
-
 export default function ClientBicycles(props) {
 	const { dockCode } = props;
 	const userScreenHeight = window.innerHeight;
 	const [loading, setLoading] = useState(true);
 	const [rows, setRows] = useState([]);
 	const bicycleAPI = useBicycleRequest();
+	const [bicycleStatuses, setBicycleStatuses] = useState([]);
+
+	const getBicycleStatus = (params) => {
+		const bicycleStatus = bicycleStatuses.find(
+			(status) => status.EnumName === params.row.Status
+		);
+		return bicycleStatus.Title;
+	};
+
+	const getBicycleStatuses = async () => {
+		const bicycleStatuses = await bicycleAPI.getBicycleStatuses();
+		setBicycleStatuses([...bicycleStatuses]);
+		displayBicycles();
+	};
 
 	const displayBicycles = async () => {
 		const bicycles = await bicycleAPI.getBicycles();
@@ -41,8 +38,26 @@ export default function ClientBicycles(props) {
 	};
 
 	useEffect(() => {
-		displayBicycles();
+		getBicycleStatuses();
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+	const columns = [
+		{ field: 'id', headerName: 'ID', flex: 1, hide: true },
+		{ field: 'Code', headerName: 'Code', flex: 1 },
+		{ field: 'Color', headerName: 'Color', flex: 1 },
+		{
+			field: 'Status',
+			headerName: 'Status',
+			width: 165,
+			valueGetter: getBicycleStatus,
+		},
+		{
+			field: 'Dock',
+			headerName: 'Dock',
+			flex: 1,
+			align: 'center',
+		},
+	];
 
 	if (loading) {
 		return <LoadingPage />;

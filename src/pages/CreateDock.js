@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useDockRequest from '../api/useDockRequest';
 import { Link } from 'react-router-dom';
 import useValidationHook from '../utils/useValidationHook';
+import useUniqueValidationHook from '../utils/useUniqueValidationHook';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import { Box, Alert } from '@mui/material';
+import { Box } from '@mui/material';
 import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import UserWindow from '../utils/UserWindow';
+import LoadingPage from '../components/LoadingPage';
+import Stack from '@mui/material/Stack';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+	return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 function Copyright() {
 	return (
@@ -29,16 +38,14 @@ function Copyright() {
 const CreateDock = () => {
 	const dockAPI = useDockRequest();
 	const validationHook = useValidationHook();
+	const uniqueValidationHook = useUniqueValidationHook();
+	const screen = UserWindow();
 	const [error, setError] = useState(null);
 	const [codeError, setCodeError] = useState({ error: false, msg: '' });
 	const [stateError, setStateError] = useState({ error: false, msg: '' });
 	const [cityError, setCityError] = useState({ error: false, msg: '' });
 	const [addressError, setAddressError] = useState({ error: false, msg: '' });
 	const [bicycleDockNumberError, setBicycleDockNumberError] = useState({
-		error: false,
-		msg: '',
-	});
-	const [bicycleCountError, setBicycleCountError] = useState({
 		error: false,
 		msg: '',
 	});
@@ -50,78 +57,107 @@ const CreateDock = () => {
 		BicycleDockNumber: 0,
 		BicycleCount: 0,
 	});
-	const screen = UserWindow();
+	const [loading, setLoading] = useState(true);
+	const [openSnackbar, setOpenSnackbar] = useState(false);
+	const [snackbarMsg, setSnackbarMsg] = useState('');
+	const [snackbarSeverity, setSnackbarSeverity] = useState('');
+	const [docks, setDocks] = useState([]);
+
+	useEffect(() => {
+		loadDocks();
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+	const loadDocks = async () => {
+		const loadedDocks = await dockAPI.getDocks();
+		setDocks([...loadedDocks]);
+		setLoading(false);
+	};
+
+	const handleCloseSnackbar = (event, reason) => {
+		if (reason === 'clickaway') {
+			return;
+		}
+		setOpenSnackbar(false);
+	};
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		if (validationHook.codeError(dockValues.Code)) {
-			setCodeError(validationHook.codeError(dockValues.Code));
+
+		let uniqueError = false;
+		const codeValidError = validationHook.codeError(dockValues.Code);
+		if (codeValidError) {
+			setCodeError(codeValidError);
 		} else {
-			setCodeError({ error: false, msg: '' });
+			uniqueError = uniqueValidationHook.dockCodeError(dockValues.Code, docks);
+			if (uniqueError) {
+				setCodeError(uniqueError);
+			} else {
+				setCodeError({ error: false, msg: '' });
+			}
 		}
-		if (validationHook.stateError(dockValues.State, 'dock')) {
-			setStateError(validationHook.stateError(dockValues.State, 'dock'));
+
+		const stateValidError = validationHook.stateError(dockValues.State, 'dock');
+		if (stateValidError) {
+			setStateError(stateValidError);
 		} else {
 			setStateError({ error: false, msg: '' });
 		}
-		if (validationHook.cityError(dockValues.City, 'dock')) {
-			setCityError(validationHook.cityError(dockValues.City, 'dock'));
+
+		const cityValidError = validationHook.cityError(dockValues.City, 'dock');
+		if (cityValidError) {
+			setCityError(cityValidError);
 		} else {
 			setCityError({ error: false, msg: '' });
 		}
-		if (validationHook.addressError(dockValues.Address, 'dock')) {
-			setAddressError(validationHook.addressError(dockValues.Address, 'dock'));
+
+		const addressValidError = validationHook.addressError(
+			dockValues.Address,
+			'dock'
+		);
+		if (addressValidError) {
+			setAddressError(addressValidError);
 		} else {
 			setAddressError({ error: false, msg: '' });
 		}
-		if (validationHook.bicycleDockNumberError(dockValues.BicycleDockNumber)) {
-			setBicycleDockNumberError(
-				validationHook.bicycleDockNumberError(dockValues.BicycleDockNumber)
-			);
+
+		const numberValidError = validationHook.bicycleDockNumberError(
+			dockValues.BicycleDockNumber
+		);
+		if (numberValidError) {
+			setBicycleDockNumberError(numberValidError);
 		} else {
 			setBicycleDockNumberError({ error: false, msg: '' });
 		}
-		if (validationHook.bicycleCountError(dockValues.BicycleCount)) {
-			setBicycleCountError(
-				validationHook.bicycleCountError(dockValues.BicycleCount)
-			);
-		} else {
-			setBicycleCountError({ error: false, msg: '' });
-		}
+
 		if (
-			validationHook.dockCountError(
-				dockValues.BicycleDockNumber,
-				dockValues.BicycleCount
-			)
-		) {
-			setBicycleCountError(
-				validationHook.dockCountError(
-					dockValues.BicycleDockNumber,
-					dockValues.BicycleCount
-				)
-			);
-		} else {
-			setBicycleCountError({ error: false, msg: '' });
-		}
-		if (
-			!validationHook.codeError(dockValues.Code) &&
-			!validationHook.stateError(dockValues.State) &&
-			!validationHook.cityError(dockValues.City) &&
-			!validationHook.addressError(dockValues.Address) &&
-			!validationHook.bicycleDockNumberError(dockValues.BicycleDockNumber) &&
-			!validationHook.bicycleCountError(dockValues.BicycleCount) &&
-			!validationHook.dockCountError(
-				dockValues.BicycleDockNumber,
-				dockValues.BicycleCount
-			)
+			!codeValidError &&
+			!uniqueError &&
+			!stateValidError &&
+			!cityValidError &&
+			!addressValidError &&
+			!numberValidError
 		) {
 			submitData(dockValues);
 		}
 	};
 
 	const submitData = async (dockData) => {
+		setLoading(true);
 		try {
-			await dockAPI.createDock(dockData);
+			const newDock = await dockAPI.createDock(dockData);
+			if (newDock) {
+				setSnackbarMsg(
+					`New dock with code ${newDock.Code} and with ${newDock.BicycleDockNumber} bicycle docks was created!`
+				);
+				setSnackbarSeverity('success');
+				setOpenSnackbar(true);
+			} else {
+				setSnackbarMsg(
+					`Failed to create new dock with code ${dockData.Code} and ${dockData.BicycleDockNumber} bicycle docks!`
+				);
+				setSnackbarSeverity('error');
+				setOpenSnackbar(true);
+			}
 		} catch (error) {
 			setError(error.response.data.msg);
 		}
@@ -133,6 +169,7 @@ const CreateDock = () => {
 			BicycleDockNumber: 0,
 			BicycleCount: 0,
 		});
+		setLoading(false);
 	};
 
 	const handleChange = (event) => {
@@ -142,6 +179,10 @@ const CreateDock = () => {
 			[event.target.name]: event.target.value,
 		});
 	};
+
+	if (loading) {
+		<LoadingPage />;
+	}
 
 	return (
 		<Container component="main" maxWidth="md">
@@ -238,18 +279,6 @@ const CreateDock = () => {
 								onChange={handleChange}
 							/>
 						</Grid>
-						<Grid item xs={12}>
-							<TextField
-								error={bicycleCountError?.error ? true : false}
-								helperText={bicycleCountError?.msg}
-								fullWidth
-								label="Bicycle Count"
-								name="BicycleCount"
-								type="number"
-								value={dockValues.BicycleCount}
-								onChange={handleChange}
-							/>
-						</Grid>
 					</Grid>
 					<Button
 						fullWidth
@@ -268,6 +297,21 @@ const CreateDock = () => {
 					</Grid>
 				</Box>
 				<Copyright sx={{ mt: 5 }} />
+				<Stack spacing={2} sx={{ width: '100%' }}>
+					<Snackbar
+						open={openSnackbar}
+						autoHideDuration={5000}
+						onClose={handleCloseSnackbar}
+					>
+						<Alert
+							onClose={handleCloseSnackbar}
+							severity={snackbarSeverity}
+							sx={{ width: '100%' }}
+						>
+							{snackbarMsg}
+						</Alert>
+					</Snackbar>
+				</Stack>
 			</Box>
 		</Container>
 	);

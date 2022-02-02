@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import usePersonRequest from '../api/usePersonRequest';
+import LoadingPage from '../components/LoadingPage';
 import { Link } from 'react-router-dom';
 import useValidationHook from '../utils/useValidationHook';
+import useUniqueValidationHook from '../utils/useUniqueValidationHook';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import { Box, Alert } from '@mui/material';
+import { Box } from '@mui/material';
 import CategoryIcon from '@mui/icons-material/Category';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import UserWindow from '../utils/UserWindow';
+import Stack from '@mui/material/Stack';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+	return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 function Copyright() {
 	return (
@@ -29,6 +38,7 @@ function Copyright() {
 const CreateProduct = () => {
 	const personAPI = usePersonRequest();
 	const validationHook = useValidationHook();
+	const uniqueValidationHook = useUniqueValidationHook();
 	const [error, setError] = useState(null);
 	const [codeError, setCodeError] = useState({ error: false, msg: '' });
 	const [nameError, setNameError] = useState({ error: false, msg: '' });
@@ -38,10 +48,6 @@ const CreateProduct = () => {
 	const [addressError, setAddressError] = useState({ error: false, msg: '' });
 	const [emailError, setEmailError] = useState({ error: false, msg: '' });
 	const [mobileNumberError, setMobileNumberError] = useState({
-		error: false,
-		msg: '',
-	});
-	const [bicycleCountError, setBicycleCountError] = useState({
 		error: false,
 		msg: '',
 	});
@@ -58,68 +64,109 @@ const CreateProduct = () => {
 		BicycleCount: 0,
 	});
 	const screen = UserWindow();
+	const [openSnackbar, setOpenSnackbar] = useState(false);
+	const [snackbarMsg, setSnackbarMsg] = useState('');
+	const [snackbarSeverity, setSnackbarSeverity] = useState('');
+	const [persons, setPersons] = useState([]);
+	const [loading, setLoading] = useState(true);
+
+	const loadPersons = async () => {
+		const loadedPersons = await personAPI.getPersons();
+		setPersons([...loadedPersons]);
+		setLoading(false);
+	};
+
+	useEffect(() => {
+		loadPersons();
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+	const handleCloseSnackbar = (event, reason) => {
+		if (reason === 'clickaway') {
+			return;
+		}
+		setOpenSnackbar(false);
+	};
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		if (validationHook.codeError(personValues.Code)) {
-			setCodeError(validationHook.codeError(personValues.Code));
+
+		let uniqueError = false;
+		const codeValidError = validationHook.codeError(personValues.Code);
+		if (codeValidError) {
+			setCodeError(codeValidError);
 		} else {
-			setCodeError({ error: false, msg: '' });
+			uniqueError = uniqueValidationHook.personCodeError(
+				personValues.Code,
+				persons
+			);
+			if (uniqueError) {
+				setCodeError(uniqueError);
+			} else {
+				setCodeError({ error: false, msg: '' });
+			}
 		}
-		if (validationHook.nameError(personValues.Name)) {
-			setNameError(validationHook.nameError(personValues.Name));
+
+		const nameValidError = validationHook.nameError(personValues.Name);
+		if (nameValidError) {
+			setNameError(nameValidError);
 		} else {
 			setNameError({ error: false, msg: '' });
 		}
-		if (validationHook.surnameError(personValues.Surname)) {
-			setSurnameError(validationHook.surnameError(personValues.Surname));
+
+		const surnameValidError = validationHook.surnameError(personValues.Surname);
+		if (surnameValidError) {
+			setSurnameError(surnameValidError);
 		} else {
 			setSurnameError({ error: false, msg: '' });
 		}
-		if (validationHook.stateError(personValues.State)) {
-			setStateError(validationHook.stateError(personValues.State));
+
+		const stateValidError = validationHook.stateError(personValues.State);
+		if (stateValidError) {
+			setStateError(stateValidError);
 		} else {
 			setStateError({ error: false, msg: '' });
 		}
-		if (validationHook.cityError(personValues.City)) {
-			setCityError(validationHook.cityError(personValues.City));
+
+		const cityValidError = validationHook.cityError(personValues.City);
+		if (cityValidError) {
+			setCityError(cityValidError);
 		} else {
 			setCityError({ error: false, msg: '' });
 		}
-		if (validationHook.addressError(personValues.Address)) {
-			setAddressError(validationHook.addressError(personValues.Address));
+
+		const addressValidError = validationHook.addressError(personValues.Address);
+		if (addressValidError) {
+			setAddressError(addressValidError);
 		} else {
 			setAddressError({ error: false, msg: '' });
 		}
-		if (validationHook.emailError(personValues.Email)) {
-			setEmailError(validationHook.emailError(personValues.Email));
+
+		const emailValidError = validationHook.emailError(personValues.Email);
+		if (emailValidError) {
+			setEmailError(emailValidError);
 		} else {
 			setEmailError({ error: false, msg: '' });
 		}
-		if (validationHook.mobileNumberError(personValues.MobileNumber)) {
-			setMobileNumberError(
-				validationHook.mobileNumberError(personValues.MobileNumber)
-			);
+
+		const mobileValidError = validationHook.mobileNumberError(
+			personValues.MobileNumber
+		);
+		if (mobileValidError) {
+			setMobileNumberError(mobileValidError);
 		} else {
 			setMobileNumberError({ error: false, msg: '' });
 		}
-		if (validationHook.bicycleCountError(personValues.BicycleCount)) {
-			setBicycleCountError(
-				validationHook.bicycleCountError(personValues.BicycleCount)
-			);
-		} else {
-			setBicycleCountError({ error: false, msg: '' });
-		}
+
 		if (
-			!validationHook.codeError(personValues.Code) &&
-			!validationHook.nameError(personValues.Name) &&
-			!validationHook.surnameError(personValues.Surname) &&
-			!validationHook.stateError(personValues.State) &&
-			!validationHook.cityError(personValues.City) &&
-			!validationHook.addressError(personValues.Address) &&
-			!validationHook.emailError(personValues.Email) &&
-			!validationHook.mobileNumberError(personValues.MobileNumber) &&
-			!validationHook.bicycleCountError(personValues.BicycleCount)
+			!codeValidError &&
+			!uniqueError &&
+			!nameValidError &&
+			!surnameValidError &&
+			!stateValidError &&
+			!cityValidError &&
+			!addressValidError &&
+			!emailValidError &&
+			!mobileValidError
 		) {
 			if (personValues.State === '') {
 				personValues.State = null;
@@ -135,8 +182,22 @@ const CreateProduct = () => {
 	};
 
 	const submitData = async (personData) => {
+		setLoading(true);
 		try {
-			await personAPI.createPerson(personData);
+			const newCreatedPerson = await personAPI.createPerson(personData);
+			if (newCreatedPerson) {
+				setSnackbarMsg(
+					`New client with code ${newCreatedPerson.Code} and name ${newCreatedPerson.Name} was created!`
+				);
+				setSnackbarSeverity('success');
+				setOpenSnackbar(true);
+			} else {
+				setSnackbarMsg(
+					`Failed to create new client with code ${personData.Code} and name ${personData.Name}!`
+				);
+				setSnackbarSeverity('error');
+				setOpenSnackbar(true);
+			}
 		} catch (error) {
 			setError(error.response.data.msg);
 		}
@@ -152,6 +213,7 @@ const CreateProduct = () => {
 			MobileNumber: '',
 			BicycleCount: 0,
 		});
+		setLoading(false);
 	};
 
 	const handleChange = (event) => {
@@ -161,6 +223,10 @@ const CreateProduct = () => {
 			[event.target.name]: event.target.value,
 		});
 	};
+
+	if (loading) {
+		return <LoadingPage />;
+	}
 
 	return (
 		<Container component="main" maxWidth="md">
@@ -289,18 +355,6 @@ const CreateProduct = () => {
 								onChange={handleChange}
 							/>
 						</Grid>
-						<Grid item xs={12}>
-							<TextField
-								error={bicycleCountError?.error ? true : false}
-								helperText={bicycleCountError?.msg}
-								fullWidth
-								label="Bicycle Count"
-								name="BicycleCount"
-								type="number"
-								value={personValues.BicycleCount}
-								onChange={handleChange}
-							/>
-						</Grid>
 					</Grid>
 					<Button
 						fullWidth
@@ -319,6 +373,21 @@ const CreateProduct = () => {
 					</Grid>
 				</Box>
 				<Copyright sx={{ mt: 5 }} />
+				<Stack spacing={2} sx={{ width: '100%' }}>
+					<Snackbar
+						open={openSnackbar}
+						autoHideDuration={5000}
+						onClose={handleCloseSnackbar}
+					>
+						<Alert
+							onClose={handleCloseSnackbar}
+							severity={snackbarSeverity}
+							sx={{ width: '100%' }}
+						>
+							{snackbarMsg}
+						</Alert>
+					</Snackbar>
+				</Stack>
 			</Box>
 		</Container>
 	);

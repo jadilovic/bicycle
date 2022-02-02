@@ -53,24 +53,33 @@ export default function Bicycle() {
 	const [confirmOpen, setConfirmOpen] = useState(false);
 	const [selectedBicycle, setSelectedBicycle] = useState({});
 
-	const handleDialogClose = () => {
-		setOpenDialog(false);
-	};
+	useEffect(() => {
+		const localStorageRentedBicycles = JSON.parse(
+			localStorage.getItem('rentedBicycles') || '[]'
+		);
+		if (localStorageRentedBicycles) {
+			setRentedBicycles(localStorageRentedBicycles);
+		}
+		const localStorageIsPedaling = JSON.parse(
+			localStorage.getItem('isPedaling')
+		);
+		if (localStorageIsPedaling) {
+			setIsPedaling(localStorageIsPedaling);
+		}
+		getBicycleStatuses(localStorageRentedBicycles, localStorageIsPedaling);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-	const handleAdminDialogClose = () => {
-		setOpenAdminDialog(false);
-	};
-
-	const handleSelectDockDialogClose = () => {
-		setOpenSelectDockDialog(false);
-	};
-
-	const handleClientInfoDialogClose = () => {
-		setOpenClientInfoDialog(false);
-	};
-
-	const handleDockInfoDialogClose = () => {
-		setOpenDockInfoDialog(false);
+	const getBicycleStatuses = async (rentedBicycles, isPedaling) => {
+		const statuses = await bicycleAPI.getBicycleStatuses();
+		setBicycleStatuses(statuses);
+		if (user.Role === 'APPADMIN') {
+			isPedaling = false;
+		}
+		if (rentedBicycles.length > 0 && isPedaling) {
+			startPedaling(rentedBicycles);
+		} else {
+			displayBicycles();
+		}
 	};
 
 	function getBicycleStatus(params) {
@@ -85,7 +94,7 @@ export default function Bicycle() {
 		setStatus(event.target.value);
 	};
 
-	const modifyBicycle = async () => {
+	const modifyBicycleStatus = async () => {
 		delete bicycle.id;
 		bicycle.Status = status;
 		await bicycleAPI.modifyBicycle(bicycle);
@@ -94,7 +103,7 @@ export default function Bicycle() {
 
 	useEffect(() => {
 		if (isMounted.current) {
-			modifyBicycle();
+			modifyBicycleStatus();
 			setLoading(true);
 		}
 	}, [status]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -107,14 +116,6 @@ export default function Bicycle() {
 			isMounted.current = true;
 		}
 	}, [bicyclesReturnDock]); // eslint-disable-line react-hooks/exhaustive-deps
-
-	const isClient = () => {
-		if (user.Role === 'CLIENT') {
-			return true;
-		} else {
-			return false;
-		}
-	};
 
 	const modifyBicycleRent = async (bicycle) => {
 		delete bicycle.id;
@@ -203,35 +204,6 @@ export default function Bicycle() {
 		}
 	};
 
-	const getBicycleStatuses = async (rentedBicycles, isPedaling) => {
-		const statuses = await bicycleAPI.getBicycleStatuses();
-		setBicycleStatuses(statuses);
-		if (user.Role === 'APPADMIN') {
-			isPedaling = false;
-		}
-		if (rentedBicycles.length > 0 && isPedaling) {
-			startPedaling(rentedBicycles);
-		} else {
-			displayBicycles();
-		}
-	};
-
-	useEffect(() => {
-		const localStorageRentedBicycles = JSON.parse(
-			localStorage.getItem('rentedBicycles') || '[]'
-		);
-		if (localStorageRentedBicycles) {
-			setRentedBicycles(localStorageRentedBicycles);
-		}
-		const localStorageIsPedaling = JSON.parse(
-			localStorage.getItem('isPedaling')
-		);
-		if (localStorageIsPedaling) {
-			setIsPedaling(localStorageIsPedaling);
-		}
-		getBicycleStatuses(localStorageRentedBicycles, localStorageIsPedaling);
-	}, []); // eslint-disable-line react-hooks/exhaustive-deps
-
 	const startPedaling = (rentedBicycles) => {
 		if (user.Role === 'APPADMIN') {
 			setOpenAdminDialog(true);
@@ -281,6 +253,34 @@ export default function Bicycle() {
 	const handleDock = async (dockCode) => {
 		setDockCode(dockCode);
 		setOpenDockInfoDialog(true);
+	};
+
+	const handleDialogClose = () => {
+		setOpenDialog(false);
+	};
+
+	const handleAdminDialogClose = () => {
+		setOpenAdminDialog(false);
+	};
+
+	const handleSelectDockDialogClose = () => {
+		setOpenSelectDockDialog(false);
+	};
+
+	const handleClientInfoDialogClose = () => {
+		setOpenClientInfoDialog(false);
+	};
+
+	const handleDockInfoDialogClose = () => {
+		setOpenDockInfoDialog(false);
+	};
+
+	const isClient = () => {
+		if (user.Role === 'CLIENT') {
+			return true;
+		} else {
+			return false;
+		}
 	};
 
 	const columns = [
