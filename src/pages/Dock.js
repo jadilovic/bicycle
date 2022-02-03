@@ -98,7 +98,7 @@ export default function Dock() {
 			<Container maxWidth="lg">
 				<div
 					style={{
-						height: userScreenHeight - 112,
+						height: userScreenHeight - 150,
 						width: '100%',
 						//	cursor: 'pointer',
 					}}

@@ -186,9 +186,9 @@ const Navbar = (props) => {
 						}}
 						open={drawerOpen}
 						onClose={handleDrawerToggle}
-						ModalProps={{
-							keepMounted: true, // Better open performance on mobile.
-						}}
+						// ModalProps={{
+						// 	keepMounted: true, // Better open performance on mobile.
+						// }}
 					>
 						<Toolbar />
 						<Box sx={{ overflow: 'auto' }}>
