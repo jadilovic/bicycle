@@ -40,6 +40,7 @@ const CreateProduct = () => {
 	const validationHook = useValidationHook();
 	const uniqueValidationHook = useUniqueValidationHook();
 	const [error, setError] = useState(null);
+	const emptyErrorObjec = { error: false, msg: '' };
 	const [codeError, setCodeError] = useState({ error: false, msg: '' });
 	const [nameError, setNameError] = useState({ error: false, msg: '' });
 	const [surnameError, setSurnameError] = useState({ error: false, msg: '' });
@@ -213,7 +214,7 @@ const CreateProduct = () => {
 			MobileNumber: '',
 			BicycleCount: 0,
 		});
-		setLoading(false);
+		loadPersons();
 	};
 
 	const handleChange = (event) => {

@@ -109,7 +109,7 @@ const CreateProduct = () => {
 	const handleSubmit = (event) => {
 		event.preventDefault();
 
-		let uniqueError = false;
+		let uniqueError;
 		const codeValidError = validationHook.codeError(bicycleValues.Code);
 		if (codeValidError) {
 			setCodeError(codeValidError);
@@ -131,6 +131,8 @@ const CreateProduct = () => {
 		} else {
 			setColorError({ error: false, msg: '' });
 		}
+
+		console.log('unique error : ', uniqueError);
 
 		if (!codeValidError && !uniqueError && !colorValidError) {
 			submitData(bicycleValues);
@@ -164,7 +166,7 @@ const CreateProduct = () => {
 		} catch (error) {
 			setError(error.response.data.msg);
 		}
-		getDocksList(bicycleStatusList);
+		loadBicycles();
 	};
 
 	const handleChange = (event) => {
@@ -213,20 +215,6 @@ const CreateProduct = () => {
 					<Grid container spacing={2}>
 						<Grid item xs={12}>
 							<TextField
-								error={colorError.error ? true : false}
-								helperText={colorError?.msg}
-								name="Color"
-								required
-								fullWidth
-								id="Color"
-								label="Color"
-								autoFocus
-								value={bicycleValues.Color}
-								onChange={handleChange}
-							/>
-						</Grid>
-						<Grid item xs={12}>
-							<TextField
 								error={codeError?.error ? true : false}
 								helperText={codeError?.msg}
 								required
@@ -236,6 +224,20 @@ const CreateProduct = () => {
 								name="Code"
 								type="number"
 								value={bicycleValues.Code}
+								onChange={handleChange}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<TextField
+								error={colorError.error ? true : false}
+								helperText={colorError?.msg}
+								name="Color"
+								required
+								fullWidth
+								id="Color"
+								label="Color"
+								autoFocus
+								value={bicycleValues.Color}
 								onChange={handleChange}
 							/>
 						</Grid>

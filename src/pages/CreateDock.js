@@ -169,7 +169,7 @@ const CreateDock = () => {
 			BicycleDockNumber: 0,
 			BicycleCount: 0,
 		});
-		setLoading(false);
+		loadDocks();
 	};
 
 	const handleChange = (event) => {
