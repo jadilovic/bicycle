@@ -48,7 +48,6 @@ export default function ClientBicycles(props) {
 		{
 			field: 'Status',
 			headerName: 'Status',
-			width: 165,
 			valueGetter: getBicycleStatus,
 		},
 		{

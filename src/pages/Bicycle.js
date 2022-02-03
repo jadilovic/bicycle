@@ -26,6 +26,13 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import SelectDock from '../components/SelectDock';
+import Stack from '@mui/material/Stack';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+	return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 export default function Bicycle() {
 	const screen = UserWindow();
@@ -53,6 +60,9 @@ export default function Bicycle() {
 	const [dockCode, setDockCode] = useState(0);
 	const [confirmOpen, setConfirmOpen] = useState(false);
 	const [selectedBicycle, setSelectedBicycle] = useState({});
+	const [openSnackbar, setOpenSnackbar] = useState(false);
+	const [snackbarMsg, setSnackbarMsg] = useState('');
+	const [snackbarSeverity, setSnackbarSeverity] = useState('');
 
 	useEffect(() => {
 		const localStorageRentedBicycles = JSON.parse(
@@ -232,13 +242,34 @@ export default function Bicycle() {
 
 	const deleteBicycle = async (bicycleObject) => {
 		setLoading(true);
-		await bicycleAPI.deleteBicycle(bicycleObject.Code);
-		const docksList = await dockAPI.getDocks();
-		const dockObject = docksList.find(
-			(dock) => dock.Code === bicycleObject.Dock
-		);
-		dockObject.BicycleCount = dockObject.BicycleCount - 1;
-		await dockAPI.modifyDock(dockObject);
+		try {
+			const deletedBicycle = await bicycleAPI.deleteBicycle(bicycleObject.Code);
+			const docksList = await dockAPI.getDocks();
+			const dockObject = docksList.find(
+				(dock) => dock.Code === bicycleObject.Dock
+			);
+			dockObject.BicycleCount = dockObject.BicycleCount - 1;
+			const modifiedDock = await dockAPI.modifyDock(dockObject);
+			if (deletedBicycle && modifiedDock) {
+				setSnackbarMsg(
+					`Bicycle with code ${deletedBicycle.Code} was deleted and removed from dock ${modifiedDock.Code}!`
+				);
+				setSnackbarSeverity('success');
+				setOpenSnackbar(true);
+			} else {
+				setSnackbarMsg(
+					`Failed to delete bicycle with code ${bicycleObject.Code}!`
+				);
+				setSnackbarSeverity('error');
+				setOpenSnackbar(true);
+			}
+		} catch (error) {
+			setSnackbarMsg(
+				`Failed to delete bicycle with code ${bicycleObject.Code}! Error message: ${error.response.data.msg}`
+			);
+			setSnackbarSeverity('error');
+			setOpenSnackbar(true);
+		}
 		displayBicycles();
 	};
 
@@ -277,6 +308,13 @@ export default function Bicycle() {
 		setOpenDockInfoDialog(false);
 	};
 
+	const handleCloseSnackbar = (event, reason) => {
+		if (reason === 'clickaway') {
+			return;
+		}
+		setOpenSnackbar(false);
+	};
+
 	const isClient = () => {
 		if (user.Role === 'CLIENT') {
 			return true;
@@ -310,7 +348,7 @@ export default function Bicycle() {
 		{
 			field: 'Status',
 			headerName: 'Status',
-			width: 165,
+			width: 150,
 			valueGetter: isClient() ? getBicycleStatus : null,
 			renderCell: isClient()
 				? null
@@ -572,6 +610,21 @@ export default function Bicycle() {
 					confirmOpen={confirmOpen}
 				/>
 			</div>
+			<Stack spacing={2} sx={{ width: '100%' }}>
+				<Snackbar
+					open={openSnackbar}
+					autoHideDuration={5000}
+					onClose={handleCloseSnackbar}
+				>
+					<Alert
+						onClose={handleCloseSnackbar}
+						severity={snackbarSeverity}
+						sx={{ width: '100%' }}
+					>
+						{snackbarMsg}
+					</Alert>
+				</Snackbar>
+			</Stack>
 		</Box>
 	);
 }
