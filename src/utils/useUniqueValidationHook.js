@@ -18,7 +18,6 @@ const useUniqueValidationHook = () => {
 		const bicycle = bicycles.find(
 			(bicycle) => bicycle.Code === Number(enteredCode)
 		);
-		console.log(bicycle);
 		if (bicycle) {
 			return {
 				error: true,

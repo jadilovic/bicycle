@@ -132,8 +132,6 @@ const CreateProduct = () => {
 			setColorError({ error: false, msg: '' });
 		}
 
-		console.log('unique error : ', uniqueError);
-
 		if (!codeValidError && !uniqueError && !colorValidError) {
 			submitData(bicycleValues);
 		}
