@@ -78,10 +78,8 @@ const Navbar = (props) => {
 	if (isAuthenticated()) {
 		role = getUserData().Role;
 		if (role === 'CLIENT') {
-			drawerAdmin = drawerAdmin.filter((menu) => menu.permission === 'CLIENT');
+			drawerAdmin = [];
 		}
-	} else {
-		drawerAdmin = [];
 	}
 
 	const handleClickAway = () => {
@@ -186,9 +184,6 @@ const Navbar = (props) => {
 						}}
 						open={drawerOpen}
 						onClose={handleDrawerToggle}
-						// ModalProps={{
-						// 	keepMounted: true, // Better open performance on mobile.
-						// }}
 					>
 						<Toolbar />
 						<Box sx={{ overflow: 'auto' }}>
