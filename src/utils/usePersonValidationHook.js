@@ -1,4 +1,4 @@
-const useValidationHook = () => {
+const usePersonValidationHook = () => {
 	const codeError = (enteredCode) => {
 		if (enteredCode >= 1000 && enteredCode <= 9999) {
 			return false;
@@ -6,17 +6,6 @@ const useValidationHook = () => {
 			return {
 				error: true,
 				msg: 'Code must be minimum 1000 or maximum 9999',
-			};
-		}
-	};
-
-	const colorError = (enteredColor) => {
-		if (enteredColor.length >= 3 && enteredColor.length <= 100) {
-			return false;
-		} else {
-			return {
-				error: true,
-				msg: 'Color must be minimum 3 and maximum 100 characters long',
 			};
 		}
 	};
@@ -100,28 +89,6 @@ const useValidationHook = () => {
 		}
 	};
 
-	const bicycleDockNumberError = (enteredBicycleDockNumber) => {
-		if (enteredBicycleDockNumber >= 1 && enteredBicycleDockNumber <= 50) {
-			return false;
-		} else {
-			return {
-				error: true,
-				msg: 'Bicycle dock number (number of spaces for bicycles on a dock) must be minimum 1 or maximum 50',
-			};
-		}
-	};
-
-	// const bicycleCountError = (enteredBicycleCount) => {
-	// 	if (enteredBicycleCount >= 0 && enteredBicycleCount <= 50) {
-	// 		return false;
-	// 	} else {
-	// 		return {
-	// 			error: true,
-	// 			msg: 'Bicycle count must be minimum 0 or maximum 50',
-	// 		};
-	// 	}
-	// };
-
 	const mobileNumberError = (enteredMobileNumber) => {
 		if (enteredMobileNumber.length >= 10 && enteredMobileNumber.length <= 30) {
 			return false;
@@ -135,7 +102,6 @@ const useValidationHook = () => {
 
 	return {
 		codeError,
-		colorError,
 		nameError,
 		stateError,
 		surnameError,
@@ -143,8 +109,7 @@ const useValidationHook = () => {
 		addressError,
 		emailError,
 		mobileNumberError,
-		bicycleDockNumberError,
 	};
 };
 
-export default useValidationHook;
+export default usePersonValidationHook;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import useDockRequest from '../api/useDockRequest';
 import { Link } from 'react-router-dom';
-import useValidationHook from '../utils/useValidationHook';
+import useDockValidationHook from '../utils/useDockValidationHook';
 import useUniqueValidationHook from '../utils/useUniqueValidationHook';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -37,18 +37,17 @@ function Copyright() {
 
 const CreateDock = () => {
 	const dockAPI = useDockRequest();
-	const validationHook = useValidationHook();
+	const validationHook = useDockValidationHook();
 	const uniqueValidationHook = useUniqueValidationHook();
 	const screen = UserWindow();
 	const [error, setError] = useState(null);
-	const [codeError, setCodeError] = useState({ error: false, msg: '' });
-	const [stateError, setStateError] = useState({ error: false, msg: '' });
-	const [cityError, setCityError] = useState({ error: false, msg: '' });
-	const [addressError, setAddressError] = useState({ error: false, msg: '' });
-	const [bicycleDockNumberError, setBicycleDockNumberError] = useState({
-		error: false,
-		msg: '',
-	});
+	const emptyErrorObject = { error: false, msg: '' };
+	const [codeError, setCodeError] = useState(emptyErrorObject);
+	const [stateError, setStateError] = useState(emptyErrorObject);
+	const [cityError, setCityError] = useState(emptyErrorObject);
+	const [addressError, setAddressError] = useState(emptyErrorObject);
+	const [bicycleDockNumberError, setBicycleDockNumberError] =
+		useState(emptyErrorObject);
 	const [dockValues, setDockValues] = useState({
 		Code: 0,
 		State: '',
@@ -92,32 +91,29 @@ const CreateDock = () => {
 			if (uniqueError) {
 				setCodeError(uniqueError);
 			} else {
-				setCodeError({ error: false, msg: '' });
+				setCodeError(emptyErrorObject);
 			}
 		}
 
-		const stateValidError = validationHook.stateError(dockValues.State, 'dock');
+		const stateValidError = validationHook.stateError(dockValues.State);
 		if (stateValidError) {
 			setStateError(stateValidError);
 		} else {
-			setStateError({ error: false, msg: '' });
+			setStateError(emptyErrorObject);
 		}
 
-		const cityValidError = validationHook.cityError(dockValues.City, 'dock');
+		const cityValidError = validationHook.cityError(dockValues.City);
 		if (cityValidError) {
 			setCityError(cityValidError);
 		} else {
-			setCityError({ error: false, msg: '' });
+			setCityError(emptyErrorObject);
 		}
 
-		const addressValidError = validationHook.addressError(
-			dockValues.Address,
-			'dock'
-		);
+		const addressValidError = validationHook.addressError(dockValues.Address);
 		if (addressValidError) {
 			setAddressError(addressValidError);
 		} else {
-			setAddressError({ error: false, msg: '' });
+			setAddressError(emptyErrorObject);
 		}
 
 		const numberValidError = validationHook.bicycleDockNumberError(
@@ -126,7 +122,7 @@ const CreateDock = () => {
 		if (numberValidError) {
 			setBicycleDockNumberError(numberValidError);
 		} else {
-			setBicycleDockNumberError({ error: false, msg: '' });
+			setBicycleDockNumberError(emptyErrorObject);
 		}
 
 		if (

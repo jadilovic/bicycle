@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import useBicycleRequest from '../api/useBicycleRequest';
 import useDockRequest from '../api/useDockRequest';
 import { Link } from 'react-router-dom';
-import useValidationHook from '../utils/useValidationHook';
+import useBicycleValidationHook from '../utils/useBicycleValidationHook';
 import useUniqueValidationHook from '../utils/useUniqueValidationHook';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -43,11 +43,12 @@ function Copyright() {
 const CreateProduct = () => {
 	const bicycleAPI = useBicycleRequest();
 	const dockAPI = useDockRequest();
-	const validationHook = useValidationHook();
+	const validationHook = useBicycleValidationHook();
 	const uniqueValidationHook = useUniqueValidationHook();
 	const [error, setError] = useState(null);
-	const [codeError, setCodeError] = useState({ error: false, msg: '' });
-	const [colorError, setColorError] = useState({ error: false, msg: '' });
+	const emptyErrorObject = { error: false, msg: '' };
+	const [codeError, setCodeError] = useState(emptyErrorObject);
+	const [colorError, setColorError] = useState(emptyErrorObject);
 	const [bicycleValues, setBicycleValues] = useState({
 		Code: '',
 		Color: '',
@@ -121,7 +122,7 @@ const CreateProduct = () => {
 			if (uniqueError) {
 				setCodeError(uniqueError);
 			} else {
-				setCodeError({ error: false, msg: '' });
+				setCodeError(emptyErrorObject);
 			}
 		}
 
@@ -129,7 +130,7 @@ const CreateProduct = () => {
 		if (colorValidError) {
 			setColorError(colorValidError);
 		} else {
-			setColorError({ error: false, msg: '' });
+			setColorError(emptyErrorObject);
 		}
 
 		if (!codeValidError && !uniqueError && !colorValidError) {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import usePersonRequest from '../api/usePersonRequest';
 import LoadingPage from '../components/LoadingPage';
 import { Link } from 'react-router-dom';
-import useValidationHook from '../utils/useValidationHook';
+import usePersonValidationHook from '../utils/usePersonValidationHook';
 import useUniqueValidationHook from '../utils/useUniqueValidationHook';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -37,21 +37,18 @@ function Copyright() {
 
 const CreateProduct = () => {
 	const personAPI = usePersonRequest();
-	const validationHook = useValidationHook();
+	const validationHook = usePersonValidationHook();
 	const uniqueValidationHook = useUniqueValidationHook();
 	const [error, setError] = useState(null);
-	const emptyErrorObjec = { error: false, msg: '' };
-	const [codeError, setCodeError] = useState({ error: false, msg: '' });
-	const [nameError, setNameError] = useState({ error: false, msg: '' });
-	const [surnameError, setSurnameError] = useState({ error: false, msg: '' });
-	const [stateError, setStateError] = useState({ error: false, msg: '' });
-	const [cityError, setCityError] = useState({ error: false, msg: '' });
-	const [addressError, setAddressError] = useState({ error: false, msg: '' });
-	const [emailError, setEmailError] = useState({ error: false, msg: '' });
-	const [mobileNumberError, setMobileNumberError] = useState({
-		error: false,
-		msg: '',
-	});
+	const emptyErrorObject = { error: false, msg: '' };
+	const [codeError, setCodeError] = useState(emptyErrorObject);
+	const [nameError, setNameError] = useState(emptyErrorObject);
+	const [surnameError, setSurnameError] = useState(emptyErrorObject);
+	const [stateError, setStateError] = useState(emptyErrorObject);
+	const [cityError, setCityError] = useState(emptyErrorObject);
+	const [addressError, setAddressError] = useState(emptyErrorObject);
+	const [emailError, setEmailError] = useState(emptyErrorObject);
+	const [mobileNumberError, setMobileNumberError] = useState(emptyErrorObject);
 	const [personValues, setPersonValues] = useState({
 		Code: 0,
 		Role: 'CLIENT',
@@ -103,7 +100,7 @@ const CreateProduct = () => {
 			if (uniqueError) {
 				setCodeError(uniqueError);
 			} else {
-				setCodeError({ error: false, msg: '' });
+				setCodeError(emptyErrorObject);
 			}
 		}
 
@@ -111,42 +108,42 @@ const CreateProduct = () => {
 		if (nameValidError) {
 			setNameError(nameValidError);
 		} else {
-			setNameError({ error: false, msg: '' });
+			setNameError(emptyErrorObject);
 		}
 
 		const surnameValidError = validationHook.surnameError(personValues.Surname);
 		if (surnameValidError) {
 			setSurnameError(surnameValidError);
 		} else {
-			setSurnameError({ error: false, msg: '' });
+			setSurnameError(emptyErrorObject);
 		}
 
 		const stateValidError = validationHook.stateError(personValues.State);
 		if (stateValidError) {
 			setStateError(stateValidError);
 		} else {
-			setStateError({ error: false, msg: '' });
+			setStateError(emptyErrorObject);
 		}
 
 		const cityValidError = validationHook.cityError(personValues.City);
 		if (cityValidError) {
 			setCityError(cityValidError);
 		} else {
-			setCityError({ error: false, msg: '' });
+			setCityError(emptyErrorObject);
 		}
 
 		const addressValidError = validationHook.addressError(personValues.Address);
 		if (addressValidError) {
 			setAddressError(addressValidError);
 		} else {
-			setAddressError({ error: false, msg: '' });
+			setAddressError(emptyErrorObject);
 		}
 
 		const emailValidError = validationHook.emailError(personValues.Email);
 		if (emailValidError) {
 			setEmailError(emailValidError);
 		} else {
-			setEmailError({ error: false, msg: '' });
+			setEmailError(emptyErrorObject);
 		}
 
 		const mobileValidError = validationHook.mobileNumberError(
@@ -155,7 +152,7 @@ const CreateProduct = () => {
 		if (mobileValidError) {
 			setMobileNumberError(mobileValidError);
 		} else {
-			setMobileNumberError({ error: false, msg: '' });
+			setMobileNumberError(emptyErrorObject);
 		}
 
 		if (
