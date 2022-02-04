@@ -216,6 +216,7 @@ const CreateProduct = () => {
 							<TextField
 								error={codeError?.error ? true : false}
 								helperText={codeError?.msg}
+								autoFocus
 								required
 								fullWidth
 								id="Code"
@@ -235,7 +236,6 @@ const CreateProduct = () => {
 								fullWidth
 								id="Color"
 								label="Color"
-								autoFocus
 								value={bicycleValues.Color}
 								onChange={handleChange}
 							/>

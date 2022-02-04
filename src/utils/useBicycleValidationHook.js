@@ -1,4 +1,5 @@
 const useBicycleValidationHook = () => {
+	//
 	const codeError = (enteredCode) => {
 		if (enteredCode >= 1000 && enteredCode <= 9999) {
 			return false;
