@@ -461,7 +461,11 @@ export default function Bicycle() {
 					</Grid>
 					<Grid item xs={4} container justifyContent="flex">
 						<Button
-							disabled={rentedBicycles.length === 0 || isPedaling}
+							disabled={
+								rentedBicycles.length === 0 ||
+								isPedaling ||
+								user.Role === 'APPADMIN'
+							}
 							variant="contained"
 							color="warning"
 							size="small"
@@ -473,7 +477,11 @@ export default function Bicycle() {
 					</Grid>
 					<Grid item xs={4} container justifyContent="flex-end">
 						<Button
-							disabled={rentedBicycles.length === 0 || !isPedaling}
+							disabled={
+								rentedBicycles.length === 0 ||
+								!isPedaling ||
+								user.Role === 'APPADMIN'
+							}
 							variant="contained"
 							color="error"
 							size="small"
